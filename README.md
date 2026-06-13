@@ -2,7 +2,8 @@
 
 Incremental idle game — first title in the MeniscusMaximus ship order. Phaser 3 + TypeScript.
 
-**Status:** Week 1–2 slice — core sim, Phaser UI, save/load, upgrades, prestige.
+**Repo:** https://github.com/subtiliorars-sys/yes-man  
+**Status:** Week 1–2 slice — core sim, Phaser UI, save/load, domino shop, prestige.
 
 ## Commands
 
