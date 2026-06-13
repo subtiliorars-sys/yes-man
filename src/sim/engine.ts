@@ -6,6 +6,8 @@ import {
   PRESTIGE_THRESHOLD,
   PRESTIGE_THRESHOLD_GROWTH,
   PROMPTS,
+  PROMPTS_TIER2,
+  PROMPT_TIER2_THRESHOLD,
   PROMPT_CLICKS_MAX,
   PROMPT_CLICKS_MIN,
   SYNERGY_UPGRADE_INDEX,
@@ -24,6 +26,9 @@ export function createState(): SimState {
     prestigeMultiplier: 1,
     nextPromptIndex: 0,
     clicksSincePrompt: 0,
+    lifetimeClicks: 0,
+    lifetimeCascades: 0,
+    stampsEarned: [],
   };
 }
 
@@ -85,9 +90,11 @@ export function clickYes(state: SimState, rng: () => number = Math.random): Clic
   let cascadeTriggered = false;
   if (state.upgPurchased[CASCADE_UPGRADE_INDEX] && rng() < 0.05) {
     cascadeTriggered = true;
+    state.lifetimeCascades += 1;
     cheerGained += clickMultiplier(state) * 10;
   }
   addCheer(state, cheerGained);
+  state.lifetimeClicks += 1;
   state.clicksSincePrompt += 1;
 
   const threshold =
@@ -97,14 +104,23 @@ export function clickYes(state: SimState, rng: () => number = Math.random): Clic
   return { cheerGained, cascadeTriggered, promptReady, activePrompt: null };
 }
 
+export function promptPool(state: SimState): PromptDef[] {
+  const pool = [...PROMPTS];
+  if (state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD) {
+    pool.push(...PROMPTS_TIER2);
+  }
+  return pool;
+}
+
 export function nextPrompt(state: SimState): PromptDef {
-  if (state.nextPromptIndex < PROMPTS.length) {
-    const p = PROMPTS[state.nextPromptIndex]!;
+  const pool = promptPool(state);
+  if (state.nextPromptIndex < pool.length) {
+    const p = pool[state.nextPromptIndex]!;
     state.nextPromptIndex += 1;
     return p;
   }
-  const idx = Math.floor(Math.random() * PROMPTS.length);
-  return PROMPTS[idx] ?? PROMPTS[0]!;
+  const idx = Math.floor(Math.random() * pool.length);
+  return pool[idx] ?? pool[0]!;
 }
 
 export function acceptPrompt(state: SimState, prompt: PromptDef): number {

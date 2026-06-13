@@ -15,6 +15,8 @@ import { UPGRADE_DEFS, YES_VARIANTS } from "../sim/economy.js";
 import { tryLoad, trySave } from "../sim/persistence.js";
 import type { PromptDef, SimState } from "../sim/types.js";
 import { DominoPanel } from "./DominoPanel.js";
+import { refreshStamps } from "../sim/stamps.js";
+import { showNewStampToasts, StampBookPanel } from "./StampBookPanel.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -33,6 +35,8 @@ export class GameScene extends Phaser.Scene {
   private yesBtn!: Phaser.GameObjects.Text;
   private prestigeBtn?: Phaser.GameObjects.Text;
   private dominoPanel?: DominoPanel;
+  private stampBtn?: Phaser.GameObjects.Text;
+  private stampBook?: StampBookPanel;
   private promptGroup?: Phaser.GameObjects.Container;
   private pendingPrompt: PromptDef | null = null;
   private saveTimer?: Phaser.Time.TimerEvent;
@@ -42,7 +46,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.state = tryLoad(storage()) ?? createState();
+    const loaded = tryLoad(storage());
+    this.state = loaded?.state ?? createState();
+    if (loaded && loaded.offlineEarned > 0) {
+      this.time.delayedCall(400, () => {
+        this.showFloat(`While away: +${formatCheer(loaded.offlineEarned)} Cheer`, 240, 120);
+      });
+    }
+    this.checkStamps();
 
     this.add.text(240, 20, "YES MAN", {
       fontSize: "26px",
@@ -50,6 +61,15 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       fontStyle: "bold",
     }).setOrigin(0.5);
+
+    this.stampBtn = this.add.text(448, 22, "Stamps", {
+      fontSize: "11px",
+      color: INK,
+      fontFamily: "system-ui, sans-serif",
+      backgroundColor: "#fff8dc",
+      padding: { x: 6, y: 3 },
+    }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+    this.stampBtn.on("pointerdown", () => this.openStampBook());
 
     this.txtCheer = this.add.text(240, 56, "0 Cheer", {
       fontSize: "20px",
@@ -85,6 +105,7 @@ export class GameScene extends Phaser.Scene {
 
     this.dominoPanel = new DominoPanel(this, 16, 330, () => this.state, () => {
       trySave(this.state, storage());
+      this.checkStamps();
       this.refreshUi();
     });
 
@@ -107,6 +128,7 @@ export class GameScene extends Phaser.Scene {
       row.on("pointerdown", () => {
         if (buyUpgrade(this.state, i)) {
           trySave(this.state, storage());
+          this.checkStamps();
           this.refreshUi();
         }
       });
@@ -133,6 +155,28 @@ export class GameScene extends Phaser.Scene {
     this.refreshUi();
   }
 
+  private checkStamps(): void {
+    const fresh = refreshStamps(this.state);
+    if (fresh.length > 0) {
+      showNewStampToasts(this, fresh);
+    }
+    this.updateStampButtonLabel();
+  }
+
+  private updateStampButtonLabel(): void {
+    if (!this.stampBtn) return;
+    const n = this.state.stampsEarned.length;
+    this.stampBtn.setText(n > 0 ? `Stamps (${n})` : "Stamps");
+  }
+
+  private openStampBook(): void {
+    if (this.stampBook) return;
+    this.stampBook = new StampBookPanel(this, () => this.state, () => {
+      this.stampBook = undefined;
+      this.updateStampButtonLabel();
+    });
+  }
+
   private handleYes(): void {
     const result = clickYes(this.state);
     this.yesBtn.setText(
@@ -154,21 +198,30 @@ export class GameScene extends Phaser.Scene {
       this.showPrompt(this.pendingPrompt);
     }
     trySave(this.state, storage());
+    this.checkStamps();
     this.refreshUi();
   }
 
   private showPrompt(prompt: PromptDef): void {
     this.promptGroup?.destroy(true);
     const g = this.add.container(0, 0);
-    const bg = this.add.rectangle(240, 310, 420, 100, 0xf5e6cc).setStrokeStyle(2, 0xe8d5b0);
-    const text = this.add.text(240, 285, prompt.text, {
+    const bg = this.add.rectangle(240, 310, 420, 110, 0xf5e6cc).setStrokeStyle(2, 0xe8d5b0);
+    const text = this.add.text(240, 278, prompt.text, {
       fontSize: "12px",
       color: INK,
       fontFamily: "system-ui, sans-serif",
       wordWrap: { width: 380 },
       align: "center",
     }).setOrigin(0.5);
-    const btn = this.add.text(240, 330, `SAY YES (+${prompt.bonus})`, {
+    const flavor = this.add.text(240, 302, prompt.flavor, {
+      fontSize: "10px",
+      color: "#a08060",
+      fontFamily: "system-ui, sans-serif",
+      fontStyle: "italic",
+      wordWrap: { width: 360 },
+      align: "center",
+    }).setOrigin(0.5);
+    const btn = this.add.text(240, 338, `SAY YES (+${prompt.bonus})`, {
       fontSize: "13px",
       color: "#ffffff",
       fontFamily: "system-ui, sans-serif",
@@ -181,9 +234,10 @@ export class GameScene extends Phaser.Scene {
       g.destroy(true);
       this.promptGroup = undefined;
       trySave(this.state, storage());
+      this.checkStamps();
       this.refreshUi();
     });
-    g.add([bg, text, btn]);
+    g.add([bg, text, flavor, btn]);
     this.promptGroup = g;
   }
 
@@ -216,6 +270,7 @@ export class GameScene extends Phaser.Scene {
       if (doPrestige(this.state)) {
         this.showFloat("Fresh outlook!", 240, 180);
         trySave(this.state, storage());
+        this.checkStamps();
         this.refreshUi();
       }
     });
@@ -252,5 +307,7 @@ export class GameScene extends Phaser.Scene {
     } else if (this.prestigeBtn) {
       this.prestigeBtn.setVisible(false);
     }
+
+    this.updateStampButtonLabel();
   }
 }

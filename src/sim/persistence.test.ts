@@ -23,10 +23,12 @@ describe("persistence", () => {
     const state = createState();
     state.cheer = 1234;
     state.genOwned[0] = 2;
+    state.stampsEarned = ["first_yes"];
     trySave(state, s);
     const loaded = tryLoad(s);
-    expect(loaded?.cheer).toBe(1234);
-    expect(loaded?.genOwned[0]).toBe(2);
+    expect(loaded?.state.cheer).toBe(1234);
+    expect(loaded?.state.genOwned[0]).toBe(2);
+    expect(loaded?.state.stampsEarned).toEqual(["first_yes"]);
   });
 
   it("returns null for missing or corrupt saves", () => {
@@ -41,8 +43,8 @@ describe("persistence", () => {
     expect(doPrestige(state)).toBe(true);
     trySave(state, s);
     const loaded = tryLoad(s)!;
-    expect(loaded.prestiges).toBe(1);
-    expect(loaded.prestigeMultiplier).toBeGreaterThan(1);
+    expect(loaded.state.prestiges).toBe(1);
+    expect(loaded.state.prestigeMultiplier).toBeGreaterThan(1);
   });
 
   it("preserves purchased upgrades", () => {
@@ -50,6 +52,29 @@ describe("persistence", () => {
     state.cheer = 500;
     buyUpgrade(state, 0);
     trySave(state, s);
-    expect(tryLoad(s)?.upgPurchased[0]).toBe(true);
+    expect(tryLoad(s)?.state.upgPurchased[0]).toBe(true);
+  });
+
+  it("migrates v1-shaped saves without stamps fields", () => {
+    s.setItem(
+      SAVE_KEY,
+      JSON.stringify({
+        version: 1,
+        state: {
+          cheer: 50,
+          totalCheerEarned: 50,
+          clickValue: 1,
+          genOwned: [0, 0, 0, 0, 0, 0, 0],
+          upgPurchased: [false, false, false, false, false, false, false, false],
+          prestiges: 0,
+          prestigeMultiplier: 1,
+          nextPromptIndex: 0,
+          clicksSincePrompt: 0,
+        },
+      })
+    );
+    const loaded = tryLoad(s);
+    expect(loaded?.state.stampsEarned).toEqual([]);
+    expect(loaded?.state.lifetimeClicks).toBe(0);
   });
 });

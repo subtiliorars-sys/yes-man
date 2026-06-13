@@ -41,6 +41,27 @@ export const PROMPTS: readonly PromptDef[] = [
   { text: "Volunteer for the office trivia team?", bonus: 45, flavor: "You know exactly one thing. It comes up." },
   { text: "Adopt a plant from the farmers market?", bonus: 30, flavor: "You name it something embarrassing." },
   { text: "Take the scenic route home?", bonus: 25, flavor: "You see a beautiful sunset you would have missed." },
+  { text: "Say hi to the neighbor you always avoid?", bonus: 35, flavor: "They are actually lovely. They also avoid you." },
+  { text: "Go to a yoga class even though you are inflexible?", bonus: 40, flavor: "You fall over twice. So does everyone else." },
+  { text: "Try cooking a complicated recipe from scratch?", bonus: 30, flavor: "It is edible. You call it a win." },
+  { text: "Join a random Discord server for a niche hobby?", bonus: 20, flavor: "You find your people." },
+  { text: "Reply to that email you have been avoiding for weeks?", bonus: 50, flavor: "They reply in 3 minutes. It is fine." },
+];
+
+/** Tier 2 — unlock at total Cheer earned (GDD content plan). */
+export const PROMPT_TIER2_THRESHOLD = 5_000;
+
+export const PROMPTS_TIER2: readonly PromptDef[] = [
+  { text: "Join a flash mob in the grocery store?", bonus: 60, flavor: "You only know half the dance. You commit anyway." },
+  { text: "Buy the absurdly specific kitchen gadget from the ad?", bonus: 45, flavor: "You will use it twice. It was worth it both times." },
+  { text: "Say yes to pet-sitting a hedgehog for the weekend?", bonus: 55, flavor: "It is prickly and judgmental. You love it." },
+  { text: "Attend a coworker's improv show on a weeknight?", bonus: 40, flavor: "Someone says 'yes, and…' unironically. You clap hard." },
+  { text: "Try the spicy challenge menu item?", bonus: 35, flavor: "Your tongue files a complaint. You sign the waiver." },
+  { text: "Help assemble IKEA furniture with no instructions?", bonus: 70, flavor: "Three extra screws remain. That is tradition." },
+  { text: "Volunteer to taste-test experimental ice cream flavors?", bonus: 50, flavor: "One is 'confident pickle.' You finish the cup." },
+  { text: "Go to a silent disco anyway?", bonus: 45, flavor: "You are dancing to different songs. Everyone is happy." },
+  { text: "Take the free sample from the enthusiastic kiosk?", bonus: 25, flavor: "You now own a tiny spoon and a new newsletter." },
+  { text: "Sign up for the 5K you did not train for?", bonus: 80, flavor: "You walk briskly with dignity. Still counts." },
 ];
 
 export const PRESTIGE_THRESHOLD = 100_000;
