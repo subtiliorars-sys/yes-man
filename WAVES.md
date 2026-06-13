@@ -27,8 +27,9 @@ One wave = one PR. Branch prefix: `automation/wave-*`. Verify: `npm run verify`.
 - [ ] 60 prompts per GDD (future wave)
 
 ### Wave YM-W5 — Prompt tiers + more copy
-**Status:** `pending`  
-- [ ] Tier 2–6 prompt pools per GDD content plan
+**Status:** `in_review` (stacked on PR #1 branch)  
+- [x] Tier 2 prompt pool (10) unlocks at 5K total Cheer
+- [ ] Tier 3–6 per GDD (future)
 - [ ] Prompt flavor line in UI card
 
 ### Wave YM-W6 — Click juice + sound stubs

@@ -8,10 +8,11 @@ import {
   createState,
   generatorCost,
   nextPrompt,
+  promptPool,
   tick,
   totalCps,
 } from "./engine.js";
-import { PROMPTS } from "./economy.js";
+import { PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
 
 describe("yes-man engine", () => {
   it("click adds cheer at base click value", () => {
@@ -72,5 +73,13 @@ describe("yes-man engine", () => {
 
   it("prompt catalog matches prototype parity (YM-W4)", () => {
     expect(PROMPTS.length).toBeGreaterThanOrEqual(15);
+  });
+
+  it("tier 2 prompts join pool after cheer threshold (YM-W5)", () => {
+    const s = createState();
+    s.totalCheerEarned = PROMPT_TIER2_THRESHOLD - 1;
+    expect(promptPool(s).length).toBe(PROMPTS.length);
+    s.totalCheerEarned = PROMPT_TIER2_THRESHOLD;
+    expect(promptPool(s).length).toBe(PROMPTS.length + PROMPTS_TIER2.length);
   });
 });

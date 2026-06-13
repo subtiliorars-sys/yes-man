@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createState, doPrestige } from "./engine.js";
-import { PRESTIGE_THRESHOLD, PROMPTS } from "./economy.js";
+import { PRESTIGE_THRESHOLD, PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
 import { refreshStamps, STAMP_DEFS } from "./stamps.js";
 
 describe("stamps", () => {
@@ -25,7 +25,8 @@ describe("stamps", () => {
 
   it("awards prompts_seen when catalog exhausted", () => {
     const s = createState();
-    s.nextPromptIndex = PROMPTS.length;
+    s.totalCheerEarned = PROMPT_TIER2_THRESHOLD;
+    s.nextPromptIndex = PROMPTS.length + PROMPTS_TIER2.length;
     const fresh = refreshStamps(s);
     expect(fresh).toContain("prompts_seen");
   });

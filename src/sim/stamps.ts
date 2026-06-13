@@ -1,5 +1,5 @@
 import type { SimState } from "./types.js";
-import { GENERATOR_DEFS, PROMPTS } from "./economy.js";
+import { GENERATOR_DEFS, PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
 
 export interface StampDef {
   id: string;
@@ -45,7 +45,10 @@ function qualifies(state: SimState, id: string): boolean {
     case "total_1m":
       return state.totalCheerEarned >= 1_000_000;
     case "prompts_seen":
-      return state.nextPromptIndex >= PROMPTS.length;
+      return (
+        state.nextPromptIndex >= PROMPTS.length + PROMPTS_TIER2.length &&
+        state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD
+      );
     default:
       return false;
   }
