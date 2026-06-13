@@ -41,6 +41,11 @@ export const PROMPTS: readonly PromptDef[] = [
   { text: "Volunteer for the office trivia team?", bonus: 45, flavor: "You know exactly one thing. It comes up." },
   { text: "Adopt a plant from the farmers market?", bonus: 30, flavor: "You name it something embarrassing." },
   { text: "Take the scenic route home?", bonus: 25, flavor: "You see a beautiful sunset you would have missed." },
+  { text: "Say hi to the neighbor you always avoid?", bonus: 35, flavor: "They are actually lovely. They also avoid you." },
+  { text: "Go to a yoga class even though you are inflexible?", bonus: 40, flavor: "You fall over twice. So does everyone else." },
+  { text: "Try cooking a complicated recipe from scratch?", bonus: 30, flavor: "It is edible. You call it a win." },
+  { text: "Join a random Discord server for a niche hobby?", bonus: 20, flavor: "You find your people." },
+  { text: "Reply to that email you have been avoiding for weeks?", bonus: 50, flavor: "They reply in 3 minutes. It is fine." },
 ];
 
 export const PRESTIGE_THRESHOLD = 100_000;

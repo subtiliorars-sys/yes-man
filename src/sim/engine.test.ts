@@ -69,4 +69,8 @@ describe("yes-man engine", () => {
     expect(first.text).toBe(PROMPTS[0]!.text);
     expect(s.nextPromptIndex).toBe(1);
   });
+
+  it("prompt catalog matches prototype parity (YM-W4)", () => {
+    expect(PROMPTS.length).toBeGreaterThanOrEqual(15);
+  });
 });

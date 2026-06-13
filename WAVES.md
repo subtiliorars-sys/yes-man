@@ -24,9 +24,11 @@ One wave = one PR. Branch prefix: `automation/wave-*`. Verify: `npm run verify`.
 - [ ] Owner visual check on overflow at 480×800
 
 ### Wave YM-W4 — Content expansion
-**Status:** `pending`  
-- [ ] 60 prompts per GDD (15 in prototype today)
+**Status:** `in_progress`  
+**Branch:** `automation/wave-ym-w4-prompts`  
+- [x] Expand prompts to prototype parity (15)
 - [ ] Achievement / milestone stamps
+- [ ] 60 prompts per GDD (future)
 
 ## Blocked (owner)
 - Steam store page copy / marketing assets
