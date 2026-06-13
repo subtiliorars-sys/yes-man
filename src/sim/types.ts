@@ -31,9 +31,14 @@ export interface SimState {
   prestigeMultiplier: number;
   nextPromptIndex: number;
   clicksSincePrompt: number;
+  /** Lifetime stats — persist across prestige (achievements). */
+  lifetimeClicks: number;
+  lifetimeCascades: number;
+  stampsEarned: string[];
 }
 
 export interface SaveEnvelope {
-  version: 1;
+  version: 2;
   state: SimState;
+  lastSavedMs: number;
 }

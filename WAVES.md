@@ -7,28 +7,34 @@ One wave = one PR. Branch prefix: `automation/wave-*`. Verify: `npm run verify`.
 ### Wave YM-W1 — Phaser vertical slice
 **Status:** `done`  
 **Completed:** 2026-06-13  
-- [x] Sim engine + vitest from HTML prototype
-- [x] Minimal Phaser UI (YES button, generators, prompts)
 
 ### Wave YM-W2 — Persistence + upgrades + prestige
 **Status:** `done`  
 **Completed:** 2026-06-13  
-- [x] localStorage save/load
-- [x] Upgrade shop rows
-- [x] Prestige button when threshold met
 
 ### Wave YM-W3 — Domino / wishing-well upgrade UI
 **Status:** `done`  
 **Completed:** 2026-06-13  
-- [x] Port domino-panel visual from `yes-man-prototype.html`
 - [ ] Owner visual check on overflow at 480×800
 
-### Wave YM-W4 — Content expansion
-**Status:** `in_progress`  
+### Wave YM-W4 — Content expansion (prompts + stamps + offline)
+**Status:** `in_review`  
 **Branch:** `automation/wave-ym-w4-prompts`  
+**PR:** https://github.com/subtiliorars-sys/yes-man/pull/1  
 - [x] Expand prompts to prototype parity (15)
-- [ ] Achievement / milestone stamps
-- [ ] 60 prompts per GDD (future)
+- [x] Achievement / milestone stamps + stamp book UI
+- [x] Full offline passive progress on load (save v2)
+- [ ] 60 prompts per GDD (future wave)
+
+### Wave YM-W5 — Prompt tiers + more copy
+**Status:** `pending`  
+- [ ] Tier 2–6 prompt pools per GDD content plan
+- [ ] Prompt flavor line in UI card
+
+### Wave YM-W6 — Click juice + sound stubs
+**Status:** `pending`  
+- [ ] Button squash animation polish (GDD 150ms spec)
+- [ ] Optional mute-friendly sound hooks (no assets shipped)
 
 ## Blocked (owner)
 - Steam store page copy / marketing assets

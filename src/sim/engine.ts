@@ -24,6 +24,9 @@ export function createState(): SimState {
     prestigeMultiplier: 1,
     nextPromptIndex: 0,
     clicksSincePrompt: 0,
+    lifetimeClicks: 0,
+    lifetimeCascades: 0,
+    stampsEarned: [],
   };
 }
 
@@ -85,9 +88,11 @@ export function clickYes(state: SimState, rng: () => number = Math.random): Clic
   let cascadeTriggered = false;
   if (state.upgPurchased[CASCADE_UPGRADE_INDEX] && rng() < 0.05) {
     cascadeTriggered = true;
+    state.lifetimeCascades += 1;
     cheerGained += clickMultiplier(state) * 10;
   }
   addCheer(state, cheerGained);
+  state.lifetimeClicks += 1;
   state.clicksSincePrompt += 1;
 
   const threshold =

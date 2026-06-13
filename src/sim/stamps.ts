@@ -1,0 +1,74 @@
+import type { SimState } from "./types.js";
+import { GENERATOR_DEFS, PROMPTS } from "./economy.js";
+
+export interface StampDef {
+  id: string;
+  label: string;
+  icon: string;
+}
+
+/** Milestone stamps — no missables; persist across prestige (GDD achievements). */
+export const STAMP_DEFS: readonly StampDef[] = [
+  { id: "first_yes", label: "1st Yes", icon: "👆" },
+  { id: "first_gen", label: "1st Gen", icon: "🐕" },
+  { id: "three_gens", label: "3 Gens", icon: "🤖" },
+  { id: "all_gens", label: "All 7", icon: "🌌" },
+  { id: "prestige", label: "Prestige", icon: "✨" },
+  { id: "cascade", label: "Cascade", icon: "🌊" },
+  { id: "total_1k", label: "1K Total", icon: "💛" },
+  { id: "total_10k", label: "10K Total", icon: "🧡" },
+  { id: "total_100k", label: "100K Total", icon: "❤️" },
+  { id: "total_1m", label: "1M Total", icon: "💎" },
+  { id: "prompts_seen", label: "All Prompts", icon: "📬" },
+];
+
+function qualifies(state: SimState, id: string): boolean {
+  switch (id) {
+    case "first_yes":
+      return state.lifetimeClicks >= 1;
+    case "first_gen":
+      return state.genOwned.some((n) => n > 0);
+    case "three_gens":
+      return state.genOwned.filter((n) => n > 0).length >= 3;
+    case "all_gens":
+      return GENERATOR_DEFS.every((_, i) => (state.genOwned[i] ?? 0) > 0);
+    case "prestige":
+      return state.prestiges >= 1;
+    case "cascade":
+      return state.lifetimeCascades >= 1;
+    case "total_1k":
+      return state.totalCheerEarned >= 1_000;
+    case "total_10k":
+      return state.totalCheerEarned >= 10_000;
+    case "total_100k":
+      return state.totalCheerEarned >= 100_000;
+    case "total_1m":
+      return state.totalCheerEarned >= 1_000_000;
+    case "prompts_seen":
+      return state.nextPromptIndex >= PROMPTS.length;
+    default:
+      return false;
+  }
+}
+
+/** Returns stamp IDs newly earned this check; mutates `state.stampsEarned`. */
+export function refreshStamps(state: SimState): string[] {
+  const earned = new Set(state.stampsEarned);
+  const fresh: string[] = [];
+  for (const def of STAMP_DEFS) {
+    if (earned.has(def.id)) continue;
+    if (!qualifies(state, def.id)) continue;
+    earned.add(def.id);
+    fresh.push(def.id);
+  }
+  state.stampsEarned = [...earned];
+  return fresh;
+}
+
+export function stampById(id: string): StampDef | undefined {
+  return STAMP_DEFS.find((s) => s.id === id);
+}
+
+export function earnedStampCount(state: SimState): number {
+  return state.stampsEarned.length;
+}
