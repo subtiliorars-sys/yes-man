@@ -205,15 +205,23 @@ export class GameScene extends Phaser.Scene {
   private showPrompt(prompt: PromptDef): void {
     this.promptGroup?.destroy(true);
     const g = this.add.container(0, 0);
-    const bg = this.add.rectangle(240, 310, 420, 100, 0xf5e6cc).setStrokeStyle(2, 0xe8d5b0);
-    const text = this.add.text(240, 285, prompt.text, {
+    const bg = this.add.rectangle(240, 310, 420, 110, 0xf5e6cc).setStrokeStyle(2, 0xe8d5b0);
+    const text = this.add.text(240, 278, prompt.text, {
       fontSize: "12px",
       color: INK,
       fontFamily: "system-ui, sans-serif",
       wordWrap: { width: 380 },
       align: "center",
     }).setOrigin(0.5);
-    const btn = this.add.text(240, 330, `SAY YES (+${prompt.bonus})`, {
+    const flavor = this.add.text(240, 302, prompt.flavor, {
+      fontSize: "10px",
+      color: "#a08060",
+      fontFamily: "system-ui, sans-serif",
+      fontStyle: "italic",
+      wordWrap: { width: 360 },
+      align: "center",
+    }).setOrigin(0.5);
+    const btn = this.add.text(240, 338, `SAY YES (+${prompt.bonus})`, {
       fontSize: "13px",
       color: "#ffffff",
       fontFamily: "system-ui, sans-serif",
@@ -229,7 +237,7 @@ export class GameScene extends Phaser.Scene {
       this.checkStamps();
       this.refreshUi();
     });
-    g.add([bg, text, btn]);
+    g.add([bg, text, flavor, btn]);
     this.promptGroup = g;
   }
 
