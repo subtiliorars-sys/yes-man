@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { createState, doPrestige } from "./engine.js";
-import { PRESTIGE_THRESHOLD, PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
+import {
+  MAX_PRESTIGES,
+  PRESTIGE_THRESHOLD,
+  PROMPTS,
+  PROMPTS_TIER2,
+  PROMPTS_TIER3,
+  PROMPT_TIER3_THRESHOLD,
+} from "./economy.js";
 import { refreshStamps, STAMP_DEFS } from "./stamps.js";
+import { SECRET_DEFS } from "./secrets.js";
 
 describe("stamps", () => {
   it("awards first_yes after one click tracked", () => {
@@ -23,12 +31,32 @@ describe("stamps", () => {
     expect(s.stampsEarned).toContain("first_gen");
   });
 
-  it("awards prompts_seen when catalog exhausted", () => {
+  it("awards prompts_seen only when every tier is exhausted", () => {
     const s = createState();
-    s.totalCheerEarned = PROMPT_TIER2_THRESHOLD;
+    s.totalCheerEarned = PROMPT_TIER3_THRESHOLD;
+    // Only tier 1+2 seen — not yet complete.
     s.nextPromptIndex = PROMPTS.length + PROMPTS_TIER2.length;
-    const fresh = refreshStamps(s);
-    expect(fresh).toContain("prompts_seen");
+    expect(refreshStamps(s)).not.toContain("prompts_seen");
+    // Now every tier has been seen.
+    s.nextPromptIndex = PROMPTS.length + PROMPTS_TIER2.length + PROMPTS_TIER3.length;
+    expect(refreshStamps(s)).toContain("prompts_seen");
+  });
+
+  it("awards golden stamps from tapped golden yeses", () => {
+    const s = createState();
+    s.lifetimeGoldenYes = 1;
+    expect(refreshStamps(s)).toContain("golden");
+    s.lifetimeGoldenYes = 10;
+    expect(refreshStamps(s)).toContain("golden_10");
+  });
+
+  it("awards the_journey only at full prestige with all secrets", () => {
+    const s = createState();
+    s.prestiges = MAX_PRESTIGES;
+    expect(refreshStamps(s)).toContain("max_prestige");
+    expect(s.stampsEarned).not.toContain("the_journey");
+    s.secretsFound = SECRET_DEFS.map((d) => d.id);
+    expect(refreshStamps(s)).toContain("the_journey");
   });
 
   it("covers every stamp definition with a qualifier", () => {

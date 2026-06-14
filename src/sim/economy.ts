@@ -64,6 +64,22 @@ export const PROMPTS_TIER2: readonly PromptDef[] = [
   { text: "Sign up for the 5K you did not train for?", bonus: 80, flavor: "You walk briskly with dignity. Still counts." },
 ];
 
+/** Tier 3 — unlock at total Cheer earned (GDD content plan, YM-W7). */
+export const PROMPT_TIER3_THRESHOLD = 25_000;
+
+export const PROMPTS_TIER3: readonly PromptDef[] = [
+  { text: "Say yes to leading the team karaoke encore?", bonus: 110, flavor: "You pick the eight-minute power ballad. No regrets." },
+  { text: "Foster three foster kittens 'just for a week'?", bonus: 130, flavor: "It has been a week. You have named all of them twice." },
+  { text: "Agree to be the wedding's surprise officiant?", bonus: 120, flavor: "You google it the night before. You absolutely nail it." },
+  { text: "Try stand-up at the open mic you swore you would only watch?", bonus: 140, flavor: "One person laughs. It is the bartender. It counts." },
+  { text: "Take the red-eye to surprise a friend across the country?", bonus: 150, flavor: "Worth every yawn. Their face is the whole reward." },
+  { text: "Say yes to the polar bear plunge for charity?", bonus: 125, flavor: "Your body files a formal objection. Your heart overrules it." },
+  { text: "Coach the kids' soccer team despite knowing zero rules?", bonus: 135, flavor: "You invent encouragement on the spot. They adore you." },
+  { text: "Repair the wobbly fence with the neighbor you just met?", bonus: 115, flavor: "By sundown you have a fence and a friend." },
+  { text: "Plant a community garden on the empty lot?", bonus: 160, flavor: "Tomatoes in August. The whole block shows up." },
+  { text: "Mentor the new hire who reminds you of younger you?", bonus: 145, flavor: "You say yes to their questions. They pass it forward someday." },
+];
+
 export const PRESTIGE_THRESHOLD = 100_000;
 export const PRESTIGE_THRESHOLD_GROWTH = 1.5;
 export const MAX_PRESTIGES = 20;
@@ -72,6 +88,19 @@ export const SYNERGY_UPGRADE_INDEX = 5;
 export const CASCADE_UPGRADE_INDEX = 6;
 export const PROMPT_CLICKS_MIN = 5;
 export const PROMPT_CLICKS_MAX = 15;
+
+/**
+ * Golden Yes — a warm surprise bubble that drifts across the screen.
+ * Tapping it grants a burst of Cheer. Never punishing, never timed-FOMO:
+ * if you miss one, another comes along. (GDD: honest delight, no dark patterns.)
+ */
+export const GOLDEN_MIN_SECONDS = 75;
+export const GOLDEN_MAX_SECONDS = 165;
+/** Seconds the bubble lingers on screen before drifting away. */
+export const GOLDEN_LIFETIME_SECONDS = 11;
+/** Reward = max(this many seconds of current CPS, this multiple of a click). */
+export const GOLDEN_CPS_SECONDS = 60;
+export const GOLDEN_CLICK_MULTIPLE = 40;
 
 export const YES_VARIANTS = [
   "YES", "Yes!", "Hell yes", "Sure why not", "Count me in", "Let's do it",

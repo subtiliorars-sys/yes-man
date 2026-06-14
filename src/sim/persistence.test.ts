@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { createState, doPrestige, buyUpgrade } from "./engine.js";
-import { tryLoad, trySave, SAVE_KEY } from "./persistence.js";
+import { exportSave, importSave, tryLoad, trySave, SAVE_KEY } from "./persistence.js";
 import { PRESTIGE_THRESHOLD } from "./economy.js";
 
 function memStorage(): Pick<Storage, "getItem" | "setItem"> & { map: Map<string, string> } {
@@ -53,6 +53,35 @@ describe("persistence", () => {
     buyUpgrade(state, 0);
     trySave(state, s);
     expect(tryLoad(s)?.state.upgPurchased[0]).toBe(true);
+  });
+
+  it("round-trips new collectible fields", () => {
+    const state = createState();
+    state.lifetimeGoldenYes = 3;
+    state.playSeconds = 1234;
+    state.secretsFound = ["konami", "good_dog"];
+    trySave(state, s);
+    const loaded = tryLoad(s)!;
+    expect(loaded.state.lifetimeGoldenYes).toBe(3);
+    expect(loaded.state.playSeconds).toBe(1234);
+    expect(loaded.state.secretsFound).toEqual(["konami", "good_dog"]);
+  });
+
+  it("exports and re-imports a save string", () => {
+    const state = createState();
+    state.cheer = 5_000;
+    state.genOwned[2] = 4;
+    state.secretsFound = ["night_owl"];
+    const code = exportSave(state);
+    const restored = importSave(code);
+    expect(restored?.cheer).toBe(5_000);
+    expect(restored?.genOwned[2]).toBe(4);
+    expect(restored?.secretsFound).toEqual(["night_owl"]);
+  });
+
+  it("rejects junk import strings without throwing", () => {
+    expect(importSave("")).toBeNull();
+    expect(importSave("definitely not a save")).toBeNull();
   });
 
   it("migrates v1-shaped saves without stamps fields", () => {
