@@ -34,7 +34,13 @@ export interface SimState {
   /** Lifetime stats — persist across prestige (achievements). */
   lifetimeClicks: number;
   lifetimeCascades: number;
+  /** Golden Yes bubbles tapped (lifetime). */
+  lifetimeGoldenYes: number;
+  /** Total seconds the game has been open (engagement / completion stat). */
+  playSeconds: number;
   stampsEarned: string[];
+  /** Discovered Easter-egg / secret IDs (persist across prestige). */
+  secretsFound: string[];
 }
 
 export interface SaveEnvelope {

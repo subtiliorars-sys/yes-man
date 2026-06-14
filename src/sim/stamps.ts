@@ -1,5 +1,13 @@
 import type { SimState } from "./types.js";
-import { GENERATOR_DEFS, PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
+import {
+  GENERATOR_DEFS,
+  MAX_PRESTIGES,
+  PROMPTS,
+  PROMPTS_TIER2,
+  PROMPTS_TIER3,
+  PROMPT_TIER3_THRESHOLD,
+} from "./economy.js";
+import { SECRET_COUNT, foundSecretCount } from "./secrets.js";
 
 export interface StampDef {
   id: string;
@@ -19,7 +27,13 @@ export const STAMP_DEFS: readonly StampDef[] = [
   { id: "total_10k", label: "10K Total", icon: "🧡" },
   { id: "total_100k", label: "100K Total", icon: "❤️" },
   { id: "total_1m", label: "1M Total", icon: "💎" },
+  { id: "total_1b", label: "1B Total", icon: "🌟" },
+  { id: "golden", label: "Golden Yes", icon: "🌟" },
+  { id: "golden_10", label: "10 Goldens", icon: "🥇" },
   { id: "prompts_seen", label: "All Prompts", icon: "📬" },
+  { id: "secret_hunter", label: "Secret Found", icon: "🔍" },
+  { id: "max_prestige", label: "Full Bloom", icon: "🌻" },
+  { id: "the_journey", label: "The Journey", icon: "🌈" },
 ];
 
 function qualifies(state: SimState, id: string): boolean {
@@ -44,10 +58,26 @@ function qualifies(state: SimState, id: string): boolean {
       return state.totalCheerEarned >= 100_000;
     case "total_1m":
       return state.totalCheerEarned >= 1_000_000;
+    case "total_1b":
+      return state.totalCheerEarned >= 1_000_000_000;
+    case "golden":
+      return state.lifetimeGoldenYes >= 1;
+    case "golden_10":
+      return state.lifetimeGoldenYes >= 10;
     case "prompts_seen":
       return (
-        state.nextPromptIndex >= PROMPTS.length + PROMPTS_TIER2.length &&
-        state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD
+        state.nextPromptIndex >=
+          PROMPTS.length + PROMPTS_TIER2.length + PROMPTS_TIER3.length &&
+        state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD
+      );
+    case "secret_hunter":
+      return foundSecretCount(state) >= 1;
+    case "max_prestige":
+      return state.prestiges >= MAX_PRESTIGES;
+    case "the_journey":
+      // The capstone for collectors: every secret found and fully prestiged.
+      return (
+        state.prestiges >= MAX_PRESTIGES && foundSecretCount(state) >= SECRET_COUNT
       );
     default:
       return false;

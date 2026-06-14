@@ -5,14 +5,24 @@ import {
   buyUpgrade,
   canPrestige,
   clickYes,
+  collectGoldenYes,
   createState,
+  formatCheer,
+  formatDuration,
   generatorCost,
+  goldenYesReward,
   nextPrompt,
   promptPool,
   tick,
   totalCps,
 } from "./engine.js";
-import { PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
+import {
+  PROMPTS,
+  PROMPTS_TIER2,
+  PROMPTS_TIER3,
+  PROMPT_TIER2_THRESHOLD,
+  PROMPT_TIER3_THRESHOLD,
+} from "./economy.js";
 
 describe("yes-man engine", () => {
   it("click adds cheer at base click value", () => {
@@ -81,5 +91,49 @@ describe("yes-man engine", () => {
     expect(promptPool(s).length).toBe(PROMPTS.length);
     s.totalCheerEarned = PROMPT_TIER2_THRESHOLD;
     expect(promptPool(s).length).toBe(PROMPTS.length + PROMPTS_TIER2.length);
+  });
+
+  it("tier 3 prompts join pool after higher threshold (YM-W7)", () => {
+    const s = createState();
+    s.totalCheerEarned = PROMPT_TIER3_THRESHOLD - 1;
+    expect(promptPool(s).length).toBe(PROMPTS.length + PROMPTS_TIER2.length);
+    s.totalCheerEarned = PROMPT_TIER3_THRESHOLD;
+    expect(promptPool(s).length).toBe(
+      PROMPTS.length + PROMPTS_TIER2.length + PROMPTS_TIER3.length
+    );
+  });
+
+  it("golden yes rewards at least 40 clicks and tracks lifetime taps", () => {
+    const s = createState();
+    expect(goldenYesReward(s)).toBeGreaterThanOrEqual(40);
+    const before = s.cheer;
+    const gained = collectGoldenYes(s);
+    expect(gained).toBeGreaterThan(0);
+    expect(s.cheer).toBeCloseTo(before + gained);
+    expect(s.lifetimeGoldenYes).toBe(1);
+  });
+
+  it("golden yes scales with running CPS once generators are humming", () => {
+    const s = createState();
+    s.cheer = 100_000;
+    for (let i = 0; i < 5; i += 1) buyGenerator(s, 6); // Cosmic Yes ×5
+    expect(goldenYesReward(s)).toBeGreaterThan(totalCps(s) * 10);
+  });
+
+  it("formatCheer scales from raw counts to short-scale suffixes", () => {
+    expect(formatCheer(5)).toBe("5.0");
+    expect(formatCheer(950)).toBe("950");
+    expect(formatCheer(1_500)).toBe("1.5K");
+    expect(formatCheer(2_300_000)).toBe("2.3M");
+    expect(formatCheer(7.2e9)).toBe("7.2B");
+    expect(formatCheer(4.5e12)).toBe("4.5T");
+    expect(formatCheer(Infinity)).toBe("∞");
+  });
+
+  it("formatDuration reads like a friendly clock", () => {
+    expect(formatDuration(45)).toBe("45s");
+    expect(formatDuration(90)).toBe("1m 30s");
+    expect(formatDuration(3_725)).toBe("1h 2m");
+    expect(formatDuration(90_000)).toBe("1d 1h");
   });
 });
