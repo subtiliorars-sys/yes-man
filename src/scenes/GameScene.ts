@@ -17,6 +17,7 @@ import type { PromptDef, SimState } from "../sim/types.js";
 import { DominoPanel } from "./DominoPanel.js";
 import { refreshStamps } from "../sim/stamps.js";
 import { showNewStampToasts, StampBookPanel } from "./StampBookPanel.js";
+import { isSfxMuted, playClickPop, setSfxMuted } from "../audio/sfx.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -33,6 +34,8 @@ export class GameScene extends Phaser.Scene {
   private txtCps!: Phaser.GameObjects.Text;
   private txtStats!: Phaser.GameObjects.Text;
   private yesBtn!: Phaser.GameObjects.Text;
+  private yesCircle!: Phaser.GameObjects.Arc;
+  private muteBtn?: Phaser.GameObjects.Text;
   private prestigeBtn?: Phaser.GameObjects.Text;
   private dominoPanel?: DominoPanel;
   private stampBtn?: Phaser.GameObjects.Text;
@@ -71,6 +74,18 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
     this.stampBtn.on("pointerdown", () => this.openStampBook());
 
+    this.muteBtn = this.add.text(16, 22, isSfxMuted() ? "Sound off" : "Sound on", {
+      fontSize: "10px",
+      color: INK,
+      fontFamily: "system-ui, sans-serif",
+      backgroundColor: "#fff8dc",
+      padding: { x: 5, y: 2 },
+    }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
+    this.muteBtn.on("pointerdown", () => {
+      setSfxMuted(!isSfxMuted());
+      this.muteBtn?.setText(isSfxMuted() ? "Sound off" : "Sound on");
+    });
+
     this.txtCheer = this.add.text(240, 56, "0 Cheer", {
       fontSize: "20px",
       color: AMBER,
@@ -91,6 +106,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const circle = this.add.circle(240, 250, 82, 0xffb347).setStrokeStyle(4, 0xff8c00);
+    this.yesCircle = circle;
     this.yesBtn = this.add.text(240, 250, "YES", {
       fontSize: "34px",
       color: "#ffffff",
@@ -182,13 +198,9 @@ export class GameScene extends Phaser.Scene {
     this.yesBtn.setText(
       YES_VARIANTS[Math.floor(Math.random() * YES_VARIANTS.length)] ?? "YES"
     );
-    this.tweens.add({
-      targets: [this.yesBtn],
-      scaleX: 0.88,
-      scaleY: 0.88,
-      duration: 75,
-      yoyo: true,
-    });
+    this.playYesSquash();
+    this.spawnClickParticles();
+    playClickPop();
     if (result.cascadeTriggered) {
       this.showFloat("YES CASCADE!", 240, 200);
     }
@@ -309,5 +321,57 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.updateStampButtonLabel();
+  }
+
+  /** GDD: 1.0 → 0.85 → 1.05 → 1.0 over 150ms */
+  private playYesSquash(): void {
+    const targets = [this.yesBtn, this.yesCircle];
+    targets.forEach((t) => {
+      t.setScale(1);
+    });
+    this.tweens.add({
+      targets,
+      scaleX: 0.85,
+      scaleY: 0.85,
+      duration: 50,
+      ease: "Quad.easeIn",
+      onComplete: () => {
+        this.tweens.add({
+          targets,
+          scaleX: 1.05,
+          scaleY: 1.05,
+          duration: 50,
+          ease: "Quad.easeOut",
+          onComplete: () => {
+            this.tweens.add({
+              targets,
+              scaleX: 1,
+              scaleY: 1,
+              duration: 50,
+              ease: "Quad.easeInOut",
+            });
+          },
+        });
+      },
+    });
+  }
+
+  private spawnClickParticles(): void {
+    const n = 6 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < n; i += 1) {
+      const angle = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+      const dist = 28 + Math.random() * 36;
+      const dot = this.add.circle(240, 250, 3 + Math.random() * 2, 0xffd700, 0.9);
+      this.tweens.add({
+        targets: dot,
+        x: 240 + Math.cos(angle) * dist,
+        y: 250 + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.2,
+        duration: 320 + Math.random() * 180,
+        ease: "Cubic.easeOut",
+        onComplete: () => dot.destroy(),
+      });
+    }
   }
 }
