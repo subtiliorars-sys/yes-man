@@ -1,6 +1,13 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { createState, doPrestige, buyUpgrade } from "./engine.js";
-import { tryLoad, trySave, clearSave, SAVE_KEY } from "./persistence.js";
+import {
+  clearSave,
+  exportSave,
+  importSave,
+  tryLoad,
+  trySave,
+  SAVE_KEY,
+} from "./persistence.js";
 import { PRESTIGE_THRESHOLD } from "./economy.js";
 
 function memStorage(): Pick<Storage, "getItem" | "setItem" | "removeItem"> & { map: Map<string, string> } {
@@ -56,6 +63,37 @@ describe("persistence", () => {
     expect(tryLoad(s)?.state.upgPurchased[0]).toBe(true);
   });
 
+  it("round-trips new collectible fields", () => {
+    const state = createState();
+    state.lifetimeGoldenYes = 3;
+    state.playSeconds = 1234;
+    state.secretsFound = ["konami", "good_dog"];
+    state.runPeakCheer = 50_000;
+    trySave(state, s);
+    const loaded = tryLoad(s)!;
+    expect(loaded.state.lifetimeGoldenYes).toBe(3);
+    expect(loaded.state.playSeconds).toBe(1234);
+    expect(loaded.state.secretsFound).toEqual(["konami", "good_dog"]);
+    expect(loaded.state.runPeakCheer).toBe(50_000);
+  });
+
+  it("exports and re-imports a save string", () => {
+    const state = createState();
+    state.cheer = 5_000;
+    state.genOwned[2] = 4;
+    state.secretsFound = ["night_owl"];
+    const code = exportSave(state);
+    const restored = importSave(code);
+    expect(restored?.cheer).toBe(5_000);
+    expect(restored?.genOwned[2]).toBe(4);
+    expect(restored?.secretsFound).toEqual(["night_owl"]);
+  });
+
+  it("rejects junk import strings without throwing", () => {
+    expect(importSave("")).toBeNull();
+    expect(importSave("definitely not a save")).toBeNull();
+  });
+
   it("migrates v1-shaped saves without stamps fields", () => {
     s.setItem(
       SAVE_KEY,
@@ -77,6 +115,7 @@ describe("persistence", () => {
     const loaded = tryLoad(s);
     expect(loaded?.state.stampsEarned).toEqual([]);
     expect(loaded?.state.lifetimeClicks).toBe(0);
+    expect(loaded?.state.secretsFound).toEqual([]);
   });
 
   it("clearSave removes stored game data", () => {

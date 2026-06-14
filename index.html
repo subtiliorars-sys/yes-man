@@ -2,11 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Yes Man</title>
     <meta
       name="description"
-      content="Yes Man is a tiny cozy idle game. Playtest it, send opt-in feedback, and vote on design prompts."
+      content="Yes Man — a warm, funny idle game about saying yes. No timers, no FOMO, full offline progress. Collect stamps, find secrets, spread Cheer."
     />
     <meta property="og:title" content="Yes Man" />
     <meta
@@ -17,8 +20,22 @@
     <meta property="og:url" content="https://subtiliorars-sys.github.io/yes-man/" />
     <meta name="theme-color" content="#fff8dc" />
     <style>
-      html, body { margin: 0; padding: 0; background: #fff8dc; overflow: hidden; }
-      #game { width: 100vw; height: 100vh; }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff8dc;
+        overflow: hidden;
+        /* Avoid mobile tap highlight / text selection during rapid clicking. */
+        -webkit-tap-highlight-color: transparent;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+      }
+      #game {
+        width: 100vw;
+        height: 100vh;
+      }
     </style>
   </head>
   <body>

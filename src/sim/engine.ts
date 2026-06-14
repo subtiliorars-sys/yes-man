@@ -18,6 +18,8 @@ import {
   PROMPT_TIER6_THRESHOLD,
   PROMPT_CLICKS_MAX,
   PROMPT_CLICKS_MIN,
+  GOLDEN_CPS_SECONDS,
+  GOLDEN_CLICK_MULTIPLE,
   SYNERGY_UPGRADE_INDEX,
   UPGRADE_DEFS,
 } from "./economy.js";
@@ -36,8 +38,11 @@ export function createState(): SimState {
     clicksSincePrompt: 0,
     lifetimeClicks: 0,
     lifetimeCascades: 0,
+    lifetimeGoldenYes: 0,
+    playSeconds: 0,
     stampsEarned: [],
     runPeakCheer: 0,
+    secretsFound: [],
   };
 }
 
@@ -144,6 +149,21 @@ export function promptTierUnlocked(totalCheerEarned: number): number {
   return 1;
 }
 
+/** Reward for tapping a Golden Yes bubble — scales with engine progress. */
+export function goldenYesReward(state: SimState): number {
+  const fromCps = totalCps(state) * GOLDEN_CPS_SECONDS;
+  const fromClick = clickMultiplier(state) * GOLDEN_CLICK_MULTIPLE;
+  return Math.max(fromCps, fromClick);
+}
+
+/** Award a tapped Golden Yes. Returns Cheer gained. */
+export function collectGoldenYes(state: SimState): number {
+  const reward = goldenYesReward(state);
+  addCheer(state, reward);
+  state.lifetimeGoldenYes += 1;
+  return reward;
+}
+
 export function nextPrompt(state: SimState): PromptDef {
   const pool = promptPool(state);
   if (state.nextPromptIndex < pool.length) {
@@ -210,9 +230,37 @@ export function doPrestige(state: SimState): boolean {
   return true;
 }
 
+/** Short-scale suffixes for the late/endgame economy (K → Decillion). */
+const CHEER_SUFFIXES = [
+  "", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc",
+] as const;
+
 export function formatCheer(n: number): string {
-  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
-  if (n >= 10) return Math.floor(n).toLocaleString();
-  return n.toFixed(1);
+  if (!Number.isFinite(n)) return "∞";
+  if (n < 0) return `-${formatCheer(-n)}`;
+  if (n < 10) return n.toFixed(1);
+  if (n < 1e3) return Math.floor(n).toLocaleString();
+
+  const tier = Math.floor(Math.log10(n) / 3);
+  if (tier >= CHEER_SUFFIXES.length) {
+    // Beyond Decillion: fall back to scientific so the UI never overflows.
+    return n.toExponential(2);
+  }
+  const scaled = n / Math.pow(10, tier * 3);
+  // 1 decimal keeps the HUD compact; drop it for clean values like "5M".
+  const text = scaled >= 100 ? scaled.toFixed(0) : scaled.toFixed(1);
+  return `${text}${CHEER_SUFFIXES[tier]}`;
+}
+
+/** Friendly "2h 14m" style duration for the stats screen. */
+export function formatDuration(totalSeconds: number): string {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const days = Math.floor(s / 86_400);
+  const hours = Math.floor((s % 86_400) / 3_600);
+  const mins = Math.floor((s % 3_600) / 60);
+  const secs = s % 60;
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${mins}m`;
+  if (mins > 0) return `${mins}m ${secs}s`;
+  return `${secs}s`;
 }

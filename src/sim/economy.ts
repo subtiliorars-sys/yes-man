@@ -133,6 +133,19 @@ export const CASCADE_UPGRADE_INDEX = 6;
 export const PROMPT_CLICKS_MIN = 5;
 export const PROMPT_CLICKS_MAX = 15;
 
+/**
+ * Golden Yes — a warm surprise bubble that drifts across the screen.
+ * Tapping it grants a burst of Cheer. Never punishing, never timed-FOMO:
+ * if you miss one, another comes along. (GDD: honest delight, no dark patterns.)
+ */
+export const GOLDEN_MIN_SECONDS = 75;
+export const GOLDEN_MAX_SECONDS = 165;
+/** Seconds the bubble lingers on screen before drifting away. */
+export const GOLDEN_LIFETIME_SECONDS = 11;
+/** Reward = max(this many seconds of current CPS, this multiple of a click). */
+export const GOLDEN_CPS_SECONDS = 60;
+export const GOLDEN_CLICK_MULTIPLE = 40;
+
 export const YES_VARIANTS = [
   "YES", "Yes!", "Hell yes", "Sure why not", "Count me in", "Let's do it",
   "Absolutely", "Why the hell not", "OK", "Let's go!", "In!", "Yep!",
