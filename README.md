@@ -17,6 +17,10 @@ npm run verify   # tsc + vitest + build
 
 No dark patterns: full offline progress, optional prestige, no FOMO timers. See `GOVERNANCE.md` and `MeniscusMaximus/YES_MAN_GDD.md`.
 
+## Playtesting
+
+The build includes a local-first **Playtest + feedback** hub for opt-in tester notes, design votes, triage, and JSON export. See `PLAYTESTING.md` for community outreach copy and the feedback review workflow.
+
 ## Waves
 
 See `WAVES.md` for autonomous worker queue.
