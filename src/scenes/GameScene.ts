@@ -19,6 +19,7 @@ import { refreshStamps } from "../sim/stamps.js";
 import { showNewStampToasts, StampBookPanel } from "./StampBookPanel.js";
 import { isSfxMuted, playClickPop, setSfxMuted } from "../audio/sfx.js";
 import { snapshotFromState } from "../playtest/feedback.js";
+import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
 import { PlaytestPanel } from "./PlaytestPanel.js";
 
 const AMBER = "#ff8c00";
@@ -177,6 +178,10 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.refreshUi();
+
+    if (typeof window !== "undefined" && shouldOpenPlaytestHub(window.location.search)) {
+      this.time.delayedCall(250, () => this.openPlaytestHub());
+    }
   }
 
   update(_time: number, delta: number): void {

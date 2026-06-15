@@ -5,6 +5,8 @@ Goal: invite as many useful playtesters as possible while keeping feedback ethic
 ## What is in the build
 
 - The game has a **Playtest + feedback** button below the score area.
+- Public playtest links can use `?playtest=1` to open the hub automatically.
+- The hub has a **Copy invite** button that prepares a tester-friendly share message.
 - Testers can submit category-tagged feedback and vote on current design decisions.
 - Each submission includes an opt-in local play snapshot: Cheer, CPS, clicks, prestiges, stamps, generators, and upgrades.
 - Feedback is stored locally in the browser until the tester exports JSON and shares it with the team.
@@ -25,6 +27,43 @@ Ask testers to play for 3-5 minutes, then submit:
 
 Use short sessions first. Fresh confusion is often more useful than polished feedback.
 
+## Public build distribution
+
+After this feature lands on `main`, GitHub Actions publishes the Vite build with the `deploy-pages` workflow.
+
+Expected public URL:
+
+```text
+https://subtiliorars-sys.github.io/yes-man/
+```
+
+Recommended playtest URL:
+
+```text
+https://subtiliorars-sys.github.io/yes-man/?playtest=1
+```
+
+If the Pages URL does not load after merge:
+
+1. Open the repository settings.
+2. Go to **Pages**.
+3. Set the source to **GitHub Actions**.
+4. Run the `deploy-pages` workflow manually.
+
+The app is static and local-first, so broad sharing does not require a server or database. The tradeoff is that testers must export and send JSON themselves.
+
+## Reasonable outreach plan
+
+Share the playtest URL in places where quick indie-game feedback is welcome:
+
+- Existing project Discord, forum, newsletter, or social account.
+- Personal devlog update with the short post below.
+- Indie game feedback channels that explicitly allow playtest requests.
+- Small direct asks to trusted players who can give concrete notes.
+- Follow-up with people who already exported JSON and ask whether they will retry a fix.
+
+Avoid spammy cold blasts, paid engagement farms, or reward-for-positive-feedback asks. They create low-signal feedback and conflict with the no-dark-patterns governance.
+
 ## Community outreach copy
 
 ### Short post
@@ -32,6 +71,12 @@ Use short sessions first. Fresh confusion is often more useful than polished fee
 > We are playtesting **Yes Man**, a tiny cozy idle game about saying yes to increasingly silly things.  
 > If you have 3-5 minutes, please try the build, tap **Playtest + feedback**, send one honest note, vote on any design prompts, and export the JSON if you are comfortable sharing it.  
 > Especially helpful: where you got confused, what felt fun, and any way you managed to break the game.
+
+Add the playtest URL to the end of the post:
+
+```text
+https://subtiliorars-sys.github.io/yes-man/?playtest=1
+```
 
 ### Discord / forum post
 

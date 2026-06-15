@@ -12,6 +12,7 @@ import {
   type PlaytestArchive,
   type PlaytestSnapshot,
 } from "../playtest/feedback.js";
+import { buildPlaytestInvite } from "../playtest/recruitment.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -41,6 +42,11 @@ function askText(message: string, defaultValue = ""): string | null {
 function askConfirm(message: string): boolean {
   if (typeof window === "undefined") return false;
   return window.confirm(message);
+}
+
+function currentUrl(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  return window.location.href;
 }
 
 /** Local-first recruitment, feedback, voting, and export modal for playtests. */
@@ -150,7 +156,8 @@ export class PlaytestPanel extends Phaser.GameObjects.Container {
     });
     this.add(this.recentText);
 
-    this.add(this.button(240, 690, "Export playtest JSON", () => this.exportArchive(), 190));
+    this.add(this.button(138, 690, "Copy invite", () => this.copyInvite(), 140));
+    this.add(this.button(316, 690, "Export JSON", () => this.exportArchive(), 140));
     this.setDepth(100);
     this.refreshSummary();
   }
@@ -231,6 +238,36 @@ export class PlaytestPanel extends Phaser.GameObjects.Container {
     }
 
     this.setStatus("Export created. Share the JSON file with the project team.");
+  }
+
+  private copyInvite(): void {
+    const url = currentUrl();
+    if (!url) {
+      this.setStatus("Invite copy is only available in a browser.");
+      return;
+    }
+
+    const invite = buildPlaytestInvite(url);
+    if (typeof navigator !== "undefined" && navigator.share) {
+      void navigator.share({ title: "Playtest Yes Man", text: invite.shortText, url: invite.url })
+        .then(() => this.setStatus("Invite shared."))
+        .catch(() => this.copyInviteText(invite.longText));
+      return;
+    }
+
+    this.copyInviteText(invite.longText);
+  }
+
+  private copyInviteText(text: string): void {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      void navigator.clipboard
+        .writeText(text)
+        .then(() => this.setStatus("Invite copied. Share it with a tester."))
+        .catch(() => this.setStatus("Invite ready, but clipboard copy was blocked."));
+      return;
+    }
+
+    this.setStatus("Invite ready, but clipboard copy is unavailable in this browser.");
   }
 
   private refreshSummary(): void {
