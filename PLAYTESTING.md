@@ -37,10 +37,22 @@ Expected public URL:
 https://subtiliorars-sys.github.io/yes-man/
 ```
 
+Public landing page for outreach:
+
+```text
+https://subtiliorars-sys.github.io/yes-man/playtest.html
+```
+
 Recommended playtest URL:
 
 ```text
 https://subtiliorars-sys.github.io/yes-man/?playtest=1
+```
+
+GitHub fallback report form:
+
+```text
+https://github.com/subtiliorars-sys/yes-man/issues/new?template=playtest-feedback.yml
 ```
 
 If the Pages URL does not load after merge:
@@ -50,7 +62,7 @@ If the Pages URL does not load after merge:
 3. Set the source to **GitHub Actions**.
 4. Run the `deploy-pages` workflow manually.
 
-The app is static and local-first, so broad sharing does not require a server or database. The tradeoff is that testers must export and send JSON themselves.
+The app is static and local-first, so broad sharing does not require a server or database. The tradeoff is that testers must export and send JSON themselves, or paste it into the GitHub playtest feedback form.
 
 ## Reasonable outreach plan
 
@@ -75,7 +87,7 @@ Avoid spammy cold blasts, paid engagement farms, or reward-for-positive-feedback
 Add the playtest URL to the end of the post:
 
 ```text
-https://subtiliorars-sys.github.io/yes-man/?playtest=1
+https://subtiliorars-sys.github.io/yes-man/playtest.html
 ```
 
 ### Discord / forum post
@@ -88,6 +100,7 @@ https://subtiliorars-sys.github.io/yes-man/?playtest=1
 > - Submit one concrete note: what you did, what you expected, and what happened or how it felt.
 > - Vote yes/no/unsure on design decisions.
 > - Export the playtest JSON and send it back if you consent.
+> - If export is awkward, use the GitHub playtest feedback form.
 >
 > Mischief is welcome when it helps us improve the game: if you find an exploit, please include reproduction steps instead of just saying it is broken.
 

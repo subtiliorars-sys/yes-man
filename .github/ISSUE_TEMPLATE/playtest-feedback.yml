@@ -1,0 +1,73 @@
+name: Playtest feedback
+description: Share a Yes Man playtest note, exported JSON, design vote, or reproducible exploit.
+title: "Playtest: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for playtesting Yes Man. Specific notes are most useful: what you did, what you expected, and what happened or how it felt.
+
+        Please do not include private information. Tester handles are optional.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Bug
+        - Balance
+        - Confusing
+        - Fun
+        - Exploit or mischief
+        - Accessibility
+        - Design vote
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Feedback
+      description: What did you do, what did you expect, and what happened or how did it feel?
+      placeholder: "After I bought the first Auto-Yeser..."
+    validations:
+      required: true
+  - type: textarea
+    id: exported-json
+    attributes:
+      label: Exported playtest JSON
+      description: If you used Playtest + feedback, paste the exported JSON here or attach the downloaded file.
+      render: json
+    validations:
+      required: false
+  - type: input
+    id: build-url
+    attributes:
+      label: Playtest URL
+      placeholder: "https://subtiliorars-sys.github.io/yes-man/?playtest=1"
+    validations:
+      required: false
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options:
+        - Desktop
+        - Mobile
+        - Tablet
+        - Other / unknown
+    validations:
+      required: false
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: "Chrome, Firefox, Safari, Edge..."
+    validations:
+      required: false
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Consent
+      options:
+        - label: The team may use this feedback to improve Yes Man.
+          required: true
