@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - cursor/playtest-feedback-hub-6742
   workflow_dispatch:
 
 permissions:
