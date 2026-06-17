@@ -17,6 +17,16 @@ npm run verify   # tsc + vitest + build
 
 No dark patterns: full offline progress, optional prestige, no FOMO timers. See `GOVERNANCE.md` and `MeniscusMaximus/YES_MAN_GDD.md`.
 
+## Playtesting
+
+The build includes a local-first **Playtest + feedback** hub for opt-in tester notes, design votes, triage, invite sharing, and JSON export. See `PLAYTESTING.md` for the public playtest URL, community outreach copy, deployment notes, and the feedback review workflow.
+
+After GitHub Pages deploys, share the playtest landing page:
+
+```text
+https://subtiliorars-sys.github.io/yes-man/playtest.html
+```
+
 ## Waves
 
 See `WAVES.md` for autonomous worker queue.

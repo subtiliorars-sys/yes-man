@@ -18,6 +18,9 @@ import { DominoPanel } from "./DominoPanel.js";
 import { refreshStamps } from "../sim/stamps.js";
 import { showNewStampToasts, StampBookPanel } from "./StampBookPanel.js";
 import { isSfxMuted, playClickPop, setSfxMuted } from "../audio/sfx.js";
+import { snapshotFromState } from "../playtest/feedback.js";
+import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
+import { PlaytestPanel } from "./PlaytestPanel.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -40,6 +43,8 @@ export class GameScene extends Phaser.Scene {
   private dominoPanel?: DominoPanel;
   private stampBtn?: Phaser.GameObjects.Text;
   private stampBook?: StampBookPanel;
+  private playtestBtn?: Phaser.GameObjects.Text;
+  private playtestPanel?: PlaytestPanel;
   private promptGroup?: Phaser.GameObjects.Container;
   private pendingPrompt: PromptDef | null = null;
   private saveTimer?: Phaser.Time.TimerEvent;
@@ -105,6 +110,15 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
     }).setOrigin(0.5);
 
+    this.playtestBtn = this.add.text(240, 124, "Playtest + feedback", {
+      fontSize: "11px",
+      color: "#ffffff",
+      fontFamily: "system-ui, sans-serif",
+      backgroundColor: "#ff8c00",
+      padding: { x: 8, y: 4 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    this.playtestBtn.on("pointerdown", () => this.openPlaytestHub());
+
     const circle = this.add.circle(240, 250, 82, 0xffb347).setStrokeStyle(4, 0xff8c00);
     this.yesCircle = circle;
     this.yesBtn = this.add.text(240, 250, "YES", {
@@ -164,6 +178,10 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.refreshUi();
+
+    if (typeof window !== "undefined" && shouldOpenPlaytestHub(window.location.search)) {
+      this.time.delayedCall(250, () => this.openPlaytestHub());
+    }
   }
 
   update(_time: number, delta: number): void {
@@ -190,6 +208,15 @@ export class GameScene extends Phaser.Scene {
     this.stampBook = new StampBookPanel(this, () => this.state, () => {
       this.stampBook = undefined;
       this.updateStampButtonLabel();
+    });
+  }
+
+  private openPlaytestHub(): void {
+    if (this.playtestPanel) return;
+    this.playtestPanel = new PlaytestPanel(this, () => {
+      return snapshotFromState(this.state, totalCps(this.state));
+    }, () => {
+      this.playtestPanel = undefined;
     });
   }
 
