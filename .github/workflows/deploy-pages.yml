@@ -28,6 +28,8 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+        env:
+          CORPS_PAGES_BASE: /yes-man/
 
       - uses: actions/configure-pages@v5
         with:
