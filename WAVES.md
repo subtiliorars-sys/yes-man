@@ -43,34 +43,35 @@ One wave = one PR. Branch prefix: `automation/wave-*` or `work/sprint-*`. Verify
 - [x] Domino hover flavor tooltips
 
 ### Wave YM-W13 — Tier 5 cosmic prompts
-**Status:** `pending`  
-- [ ] 10 tier-5 prompts (unlock 500K Cheer)
-- [ ] Wire tier + stamp
+**Status:** `done`  
+- [x] 10 tier-5 prompts (unlock 500K Cheer)
+- [x] Wire tier + Cosmic Yes stamp
 
 ### Wave YM-W14 — Tier 6 fourth-wall prompts
-**Status:** `pending`  
-- [ ] 10 tier-6 prompts (unlock 2M Cheer)
-- [ ] Completionist stamp update
+**Status:** `done`  
+- [x] 10 tier-6 prompts (unlock 2M Cheer)
+- [x] Completionist stamp update via `promptPool()`
 
 ### Wave YM-W15 — Generator tick chimes
-**Status:** `pending`  
-- [ ] Gentle CPS-cycle chime (pitch per generator type)
-- [ ] Mute-friendly; no asset files
+**Status:** `done`  
+- [x] Gentle CPS-cycle chime (pitch per generator type)
+- [x] Mute-friendly; no asset files
 
 ### Wave YM-W16 — Prestige preview tooltip
-**Status:** `pending`  
-- [ ] Show next threshold + multiplier gain before reset
-- [ ] Confirm dialog (non-dark-pattern)
+**Status:** `done`  
+- [x] Threshold + multiplier preview line
+- [x] Confirm dialog (Yes / Not yet)
 
 ### Wave YM-W17 — Playtest export enrichment
-**Status:** `pending`  
-- [ ] Snapshot includes prompt tier progress + stamp count
-- [ ] Design-vote prompt refresh for new features
+**Status:** `done`  
+- [x] Snapshot: promptTierUnlocked, promptsSeen
+- [x] Design vote: keyboard_yes
 
 ### Wave YM-W18 — Mobile tap targets + 480×800 pass
-**Status:** `pending`  
-- [ ] Larger YES hit area on narrow viewports
-- [ ] Owner visual check on overflow at 480×800 (from W3/W6)
+**Status:** `done`  
+- [x] Larger YES hit area on narrow viewports
+- [x] Scroll hint for upgrades list
+- [ ] Owner visual check on overflow at 480×800
 
 ## Completed waves
 

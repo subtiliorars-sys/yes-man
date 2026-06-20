@@ -99,3 +99,26 @@ export function playPrestigeArpeggio(): void {
     osc.stop(start + 0.4);
   });
 }
+
+const GENERATOR_PITCHES = [392, 440, 494, 523, 587, 659, 698] as const;
+
+/** Gentle chime when passive generators tick — pitch varies by generator type. */
+export function playGeneratorTick(generatorIndex: number): void {
+  if (isSfxMuted()) return;
+  const ac = ctx();
+  if (!ac) return;
+  if (ac.state === "suspended") void ac.resume();
+  const t0 = ac.currentTime;
+  const freq = GENERATOR_PITCHES[generatorIndex % GENERATOR_PITCHES.length] ?? 440;
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.04, t0 + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12);
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(t0);
+  osc.stop(t0 + 0.14);
+}

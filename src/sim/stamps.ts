@@ -2,14 +2,12 @@ import type { SimState } from "./types.js";
 import {
   GENERATOR_DEFS,
   PROMPTS,
-  PROMPTS_TIER2,
-  PROMPTS_TIER3,
-  PROMPTS_TIER4,
-  PROMPT_TIER2_THRESHOLD,
   PROMPT_TIER3_THRESHOLD,
   PROMPT_TIER4_THRESHOLD,
+  PROMPT_TIER5_THRESHOLD,
+  PROMPT_TIER6_THRESHOLD,
 } from "./economy.js";
-
+import { promptPool } from "./engine.js";
 export interface StampDef {
   id: string;
   label: string;
@@ -31,6 +29,8 @@ export const STAMP_DEFS: readonly StampDef[] = [
   { id: "prompts_seen", label: "All Prompts", icon: "📬" },
   { id: "tier3_unlock", label: "Weird Yes", icon: "🎭" },
   { id: "tier4_unlock", label: "Heart Yes", icon: "💝" },
+  { id: "tier5_unlock", label: "Cosmic Yes", icon: "🌠" },
+  { id: "tier6_unlock", label: "Meta Yes", icon: "🪞" },
   { id: "veteran_yes", label: "5 Prestige", icon: "🏅" },
   { id: "clicks_1k", label: "1K Clicks", icon: "👍" },
 ];
@@ -58,17 +58,17 @@ function qualifies(state: SimState, id: string): boolean {
     case "total_1m":
       return state.totalCheerEarned >= 1_000_000;
     case "prompts_seen": {
-      const fullPool =
-        PROMPTS.length +
-        (state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD ? PROMPTS_TIER2.length : 0) +
-        (state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD ? PROMPTS_TIER3.length : 0) +
-        (state.totalCheerEarned >= PROMPT_TIER4_THRESHOLD ? PROMPTS_TIER4.length : 0);
+      const fullPool = promptPool(state).length;
       return state.nextPromptIndex >= fullPool && fullPool >= PROMPTS.length;
     }
     case "tier3_unlock":
       return state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD;
     case "tier4_unlock":
       return state.totalCheerEarned >= PROMPT_TIER4_THRESHOLD;
+    case "tier5_unlock":
+      return state.totalCheerEarned >= PROMPT_TIER5_THRESHOLD;
+    case "tier6_unlock":
+      return state.totalCheerEarned >= PROMPT_TIER6_THRESHOLD;
     case "veteran_yes":
       return state.prestiges >= 5;
     case "clicks_1k":

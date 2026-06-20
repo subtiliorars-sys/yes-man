@@ -12,7 +12,7 @@ import {
   tick,
   totalCps,
 } from "./engine.js";
-import { PROMPTS, PROMPTS_TIER2, PROMPTS_TIER3, PROMPTS_TIER4, PROMPT_TIER2_THRESHOLD, PROMPT_TIER3_THRESHOLD, PROMPT_TIER4_THRESHOLD } from "./economy.js";
+import { PROMPTS, PROMPTS_TIER2, PROMPTS_TIER3, PROMPTS_TIER4, PROMPTS_TIER5, PROMPTS_TIER6, PROMPT_TIER2_THRESHOLD, PROMPT_TIER3_THRESHOLD, PROMPT_TIER4_THRESHOLD, PROMPT_TIER5_THRESHOLD, PROMPT_TIER6_THRESHOLD } from "./economy.js";
 
 describe("yes-man engine", () => {
   it("click adds cheer at base click value", () => {
@@ -94,6 +94,15 @@ describe("yes-man engine", () => {
     s.totalCheerEarned = PROMPT_TIER4_THRESHOLD;
     expect(promptPool(s).length).toBe(
       PROMPTS.length + PROMPTS_TIER2.length + PROMPTS_TIER3.length + PROMPTS_TIER4.length
+    );
+    s.totalCheerEarned = PROMPT_TIER6_THRESHOLD;
+    expect(promptPool(s).length).toBe(
+      PROMPTS.length +
+        PROMPTS_TIER2.length +
+        PROMPTS_TIER3.length +
+        PROMPTS_TIER4.length +
+        PROMPTS_TIER5.length +
+        PROMPTS_TIER6.length
     );
   });
 });

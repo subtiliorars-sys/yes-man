@@ -52,6 +52,8 @@ export const PROMPTS: readonly PromptDef[] = [
 export const PROMPT_TIER2_THRESHOLD = 5_000;
 export const PROMPT_TIER3_THRESHOLD = 25_000;
 export const PROMPT_TIER4_THRESHOLD = 100_000;
+export const PROMPT_TIER5_THRESHOLD = 500_000;
+export const PROMPT_TIER6_THRESHOLD = 2_000_000;
 
 export const PROMPTS_TIER2: readonly PromptDef[] = [
   { text: "Join a flash mob in the grocery store?", bonus: 60, flavor: "You only know half the dance. You commit anyway." },
@@ -92,6 +94,34 @@ export const PROMPTS_TIER4: readonly PromptDef[] = [
   { text: "Donate time to a cause you care about but never made time for?", bonus: 135, flavor: "You meet someone who says the same thing about you." },
   { text: "Tell a friend you are proud of them, out loud?", bonus: 105, flavor: "They go quiet, then: 'That means a lot.' So do you." },
   { text: "Take a day to rest without calling it lazy?", bonus: 160, flavor: "You wake up softer. Progress, not perfection." },
+];
+
+/** Tier 5 — unlock at 500K total Cheer (GDD: cosmic / philosophical). */
+export const PROMPTS_TIER5: readonly PromptDef[] = [
+  { text: "Watch the sunrise even though you are not a morning person?", bonus: 175, flavor: "The sky does not ask permission. Neither do you." },
+  { text: "Say yes to sitting quietly for ten minutes with no phone?", bonus: 150, flavor: "Your thoughts arrive like polite guests." },
+  { text: "Forgive yourself for a choice you made years ago?", bonus: 200, flavor: "You were doing your best with what you knew." },
+  { text: "Walk outside and name three things you are grateful for?", bonus: 165, flavor: "One of them is embarrassingly small. It counts." },
+  { text: "Accept that some questions do not need answers today?", bonus: 180, flavor: "The universe nods. You exhale." },
+  { text: "Plant something knowing you may not see it fully grown?", bonus: 190, flavor: "Future you will thank present you. Maybe literally." },
+  { text: "Listen to a song that makes you feel like a kid again?", bonus: 155, flavor: "You remember the chorus. Your shoulders drop." },
+  { text: "Say yes to being imperfect in public?", bonus: 170, flavor: "Someone else relaxes because you did." },
+  { text: "Watch clouds until you forget what you were worried about?", bonus: 160, flavor: "They reshape themselves. So can you." },
+  { text: "Trust that saying yes to small joys adds up?", bonus: 210, flavor: "The math is kindness, not arithmetic." },
+];
+
+/** Tier 6 — unlock at 2M total Cheer (GDD: fourth-wall / full absurdity). */
+export const PROMPTS_TIER6: readonly PromptDef[] = [
+  { text: "Click the big YES button one more time?", bonus: 220, flavor: "Meta? Maybe. Fun? Definitely." },
+  { text: "Open the stamp book to admire your collection?", bonus: 180, flavor: "Achievement unlocked: appreciating achievements." },
+  { text: "Toggle sound off, then on, just to hear the pop?", bonus: 150, flavor: "The dev who wrote this smiles somewhere." },
+  { text: "Export playtest feedback about how weird tier 6 is?", bonus: 250, flavor: "Consent-based telemetry: you hold the clipboard." },
+  { text: "Prestige even though the numbers are comforting?", bonus: 300, flavor: "Fresh outlook loading… ████████░░ 80%" },
+  { text: "Buy the seventh generator because the domino row looks lonely?", bonus: 240, flavor: "Cosmic Yes appreciates the aesthetic." },
+  { text: "Read every flavor line on every Auto-Yeser?", bonus: 190, flavor: "The Elder has seen things. So have you." },
+  { text: "Say yes to recommending this game to one friend?", bonus: 275, flavor: "No dark patterns attached. Pinky promise." },
+  { text: "Leave the tab open to earn offline Cheer ethically?", bonus: 200, flavor: "Full progress. No FOMO timer. GDD P2." },
+  { text: "Start a new run after you have seen every prompt?", bonus: 350, flavor: "Completionist energy is valid completionist energy." },
 ];
 
 export const PRESTIGE_THRESHOLD = 100_000;
