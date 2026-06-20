@@ -50,6 +50,8 @@ export const PROMPTS: readonly PromptDef[] = [
 
 /** Tier 2 — unlock at total Cheer earned (GDD content plan). */
 export const PROMPT_TIER2_THRESHOLD = 5_000;
+export const PROMPT_TIER3_THRESHOLD = 25_000;
+export const PROMPT_TIER4_THRESHOLD = 100_000;
 
 export const PROMPTS_TIER2: readonly PromptDef[] = [
   { text: "Join a flash mob in the grocery store?", bonus: 60, flavor: "You only know half the dance. You commit anyway." },
@@ -62,6 +64,34 @@ export const PROMPTS_TIER2: readonly PromptDef[] = [
   { text: "Go to a silent disco anyway?", bonus: 45, flavor: "You are dancing to different songs. Everyone is happy." },
   { text: "Take the free sample from the enthusiastic kiosk?", bonus: 25, flavor: "You now own a tiny spoon and a new newsletter." },
   { text: "Sign up for the 5K you did not train for?", bonus: 80, flavor: "You walk briskly with dignity. Still counts." },
+];
+
+/** Tier 3 — unlock at 25K total Cheer (GDD: genuinely weird). */
+export const PROMPTS_TIER3: readonly PromptDef[] = [
+  { text: "Trade names with a barista for the rest of the day?", bonus: 90, flavor: "They call you Espresso. You call them Kevin. It works." },
+  { text: "Wear a cape to the grocery store 'for confidence'?", bonus: 75, flavor: "Three strangers salute you. One asks for autographs." },
+  { text: "Say yes to hosting a séance-themed book club?", bonus: 85, flavor: "The candles were scented 'library ghost.' Everyone loved it." },
+  { text: "Help a stranger parallel park using only hand signals?", bonus: 70, flavor: "It takes four tries. You both cheer at the end." },
+  { text: "Join a neighborhood committee about bird bath etiquette?", bonus: 65, flavor: "There is a spreadsheet. You are now Vice Chair." },
+  { text: "Audition for a local commercial as 'Happy Customer #3'?", bonus: 95, flavor: "You nail the line: 'I also enjoy beverages!'" },
+  { text: "Babysit a friend's sourdough starter for a week?", bonus: 80, flavor: "You name it Gerald. Gerald is thriving." },
+  { text: "Take the scenic elevator instead of the stairs?", bonus: 60, flavor: "A stranger shares life advice between floors 2 and 3." },
+  { text: "Participate in a workplace 'fun fact' icebreaker?", bonus: 55, flavor: "Your fact is too good. HR asks for a follow-up email." },
+  { text: "Say yes to a mystery box from the community swap?", bonus: 100, flavor: "Inside: a ukulele, three scarves, and a note that says 'you'll know.'" },
+];
+
+/** Tier 4 — unlock at 100K total Cheer (GDD: heartfelt / meaningful). */
+export const PROMPTS_TIER4: readonly PromptDef[] = [
+  { text: "Call someone you have been meaning to reconnect with?", bonus: 120, flavor: "They answer on the second ring. It feels like no time passed." },
+  { text: "Apologize for something small you still think about?", bonus: 110, flavor: "They laugh. 'I forgot that even happened.' You feel lighter." },
+  { text: "Say yes to helping a neighbor who never asks for help?", bonus: 130, flavor: "They cry a little. You pretend you did not notice. It is okay." },
+  { text: "Write a thank-you note to a teacher who changed your path?", bonus: 115, flavor: "They reply: 'I still remember you.' You definitely cry." },
+  { text: "Attend a memorial for someone you barely knew?", bonus: 125, flavor: "You learn three stories that make you glad you came." },
+  { text: "Offer to cover a shift so a coworker can be with family?", bonus: 140, flavor: "They send a photo later. Worth every minute." },
+  { text: "Say yes to a hard conversation you have been avoiding?", bonus: 150, flavor: "It is awkward for four minutes. Then it is better." },
+  { text: "Donate time to a cause you care about but never made time for?", bonus: 135, flavor: "You meet someone who says the same thing about you." },
+  { text: "Tell a friend you are proud of them, out loud?", bonus: 105, flavor: "They go quiet, then: 'That means a lot.' So do you." },
+  { text: "Take a day to rest without calling it lazy?", bonus: 160, flavor: "You wake up softer. Progress, not perfection." },
 ];
 
 export const PRESTIGE_THRESHOLD = 100_000;

@@ -1,5 +1,14 @@
 import type { SimState } from "./types.js";
-import { GENERATOR_DEFS, PROMPTS, PROMPTS_TIER2, PROMPT_TIER2_THRESHOLD } from "./economy.js";
+import {
+  GENERATOR_DEFS,
+  PROMPTS,
+  PROMPTS_TIER2,
+  PROMPTS_TIER3,
+  PROMPTS_TIER4,
+  PROMPT_TIER2_THRESHOLD,
+  PROMPT_TIER3_THRESHOLD,
+  PROMPT_TIER4_THRESHOLD,
+} from "./economy.js";
 
 export interface StampDef {
   id: string;
@@ -20,6 +29,10 @@ export const STAMP_DEFS: readonly StampDef[] = [
   { id: "total_100k", label: "100K Total", icon: "❤️" },
   { id: "total_1m", label: "1M Total", icon: "💎" },
   { id: "prompts_seen", label: "All Prompts", icon: "📬" },
+  { id: "tier3_unlock", label: "Weird Yes", icon: "🎭" },
+  { id: "tier4_unlock", label: "Heart Yes", icon: "💝" },
+  { id: "veteran_yes", label: "5 Prestige", icon: "🏅" },
+  { id: "clicks_1k", label: "1K Clicks", icon: "👍" },
 ];
 
 function qualifies(state: SimState, id: string): boolean {
@@ -44,11 +57,22 @@ function qualifies(state: SimState, id: string): boolean {
       return state.totalCheerEarned >= 100_000;
     case "total_1m":
       return state.totalCheerEarned >= 1_000_000;
-    case "prompts_seen":
-      return (
-        state.nextPromptIndex >= PROMPTS.length + PROMPTS_TIER2.length &&
-        state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD
-      );
+    case "prompts_seen": {
+      const fullPool =
+        PROMPTS.length +
+        (state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD ? PROMPTS_TIER2.length : 0) +
+        (state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD ? PROMPTS_TIER3.length : 0) +
+        (state.totalCheerEarned >= PROMPT_TIER4_THRESHOLD ? PROMPTS_TIER4.length : 0);
+      return state.nextPromptIndex >= fullPool && fullPool >= PROMPTS.length;
+    }
+    case "tier3_unlock":
+      return state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD;
+    case "tier4_unlock":
+      return state.totalCheerEarned >= PROMPT_TIER4_THRESHOLD;
+    case "veteran_yes":
+      return state.prestiges >= 5;
+    case "clicks_1k":
+      return state.lifetimeClicks >= 1_000;
     default:
       return false;
   }

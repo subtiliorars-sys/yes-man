@@ -7,7 +7,11 @@ import {
   PRESTIGE_THRESHOLD_GROWTH,
   PROMPTS,
   PROMPTS_TIER2,
+  PROMPTS_TIER3,
+  PROMPTS_TIER4,
   PROMPT_TIER2_THRESHOLD,
+  PROMPT_TIER3_THRESHOLD,
+  PROMPT_TIER4_THRESHOLD,
   PROMPT_CLICKS_MAX,
   PROMPT_CLICKS_MIN,
   SYNERGY_UPGRADE_INDEX,
@@ -108,6 +112,12 @@ export function promptPool(state: SimState): PromptDef[] {
   const pool = [...PROMPTS];
   if (state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD) {
     pool.push(...PROMPTS_TIER2);
+  }
+  if (state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD) {
+    pool.push(...PROMPTS_TIER3);
+  }
+  if (state.totalCheerEarned >= PROMPT_TIER4_THRESHOLD) {
+    pool.push(...PROMPTS_TIER4);
   }
   return pool;
 }

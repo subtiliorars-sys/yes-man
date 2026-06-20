@@ -15,9 +15,10 @@ import { UPGRADE_DEFS, YES_VARIANTS } from "../sim/economy.js";
 import { tryLoad, trySave } from "../sim/persistence.js";
 import type { PromptDef, SimState } from "../sim/types.js";
 import { DominoPanel } from "./DominoPanel.js";
+import { formatAwayTime } from "../sim/offline.js";
 import { refreshStamps } from "../sim/stamps.js";
 import { showNewStampToasts, StampBookPanel } from "./StampBookPanel.js";
-import { isSfxMuted, playClickPop, setSfxMuted } from "../audio/sfx.js";
+import { isSfxMuted, playClickPop, playPrestigeArpeggio, playPromptYes, setSfxMuted } from "../audio/sfx.js";
 import { snapshotFromState } from "../playtest/feedback.js";
 import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
 import { PlaytestPanel } from "./PlaytestPanel.js";
@@ -25,6 +26,17 @@ import { PlaytestPanel } from "./PlaytestPanel.js";
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
 const MUTED = "#999977";
+
+const BG_TIERS = [
+  { threshold: 0, color: 0xfff8dc },
+  { threshold: 1_000, color: 0xfff0d4 },
+  { threshold: 10_000, color: 0xffe8c8 },
+  { threshold: 100_000, color: 0xffe0bc },
+  { threshold: 500_000, color: 0xffd8b0 },
+  { threshold: 2_000_000, color: 0xffd0a4 },
+] as const;
+
+const CLICK_MILESTONES = [100, 500, 1_000, 5_000, 10_000] as const;
 
 function storage(): Pick<Storage, "getItem" | "setItem"> | undefined {
   if (typeof localStorage === "undefined") return undefined;
@@ -48,6 +60,8 @@ export class GameScene extends Phaser.Scene {
   private promptGroup?: Phaser.GameObjects.Container;
   private pendingPrompt: PromptDef | null = null;
   private saveTimer?: Phaser.Time.TimerEvent;
+  private bgRect?: Phaser.GameObjects.Rectangle;
+  private huePhase = 0;
 
   constructor() {
     super("GameScene");
@@ -56,9 +70,13 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     const loaded = tryLoad(storage());
     this.state = loaded?.state ?? createState();
+
+    this.bgRect = this.add.rectangle(240, 400, 480, 800, BG_TIERS[0].color).setOrigin(0.5);
+    this.bgRect.setDepth(-10);
+
     if (loaded && loaded.offlineEarned > 0) {
       this.time.delayedCall(400, () => {
-        this.showFloat(`While away: +${formatCheer(loaded.offlineEarned)} Cheer`, 240, 120);
+        this.showWelcomeBack(loaded.awaySeconds, loaded.offlineEarned);
       });
     }
     this.checkStamps();
@@ -133,6 +151,15 @@ export class GameScene extends Phaser.Scene {
     circle.on("pointerdown", onYes);
     this.yesBtn.on("pointerdown", onYes);
 
+    if (this.input.keyboard) {
+      const onKeyYes = (event: KeyboardEvent) => {
+        if (event.repeat || this.pendingPrompt || this.playtestPanel || this.stampBook) return;
+        this.handleYes();
+      };
+      this.input.keyboard.on("keydown-SPACE", onKeyYes);
+      this.input.keyboard.on("keydown-ENTER", onKeyYes);
+    }
+
     this.dominoPanel = new DominoPanel(this, 16, 330, () => this.state, () => {
       trySave(this.state, storage());
       this.checkStamps();
@@ -186,7 +213,32 @@ export class GameScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     tick(this.state, delta / 1000);
+    this.refreshBackgroundTier();
+    this.refreshButtonHue(delta);
     this.refreshUi();
+  }
+
+  private refreshBackgroundTier(): void {
+    if (!this.bgRect) return;
+    let color: number = BG_TIERS[0].color;
+    for (const tier of BG_TIERS) {
+      if (this.state.totalCheerEarned >= tier.threshold) color = tier.color;
+    }
+    this.bgRect.setFillStyle(color);
+  }
+
+  /** GDD: button background shifts slowly through warm colors. */
+  private refreshButtonHue(delta: number): void {
+    this.huePhase += delta / 300_000;
+    const t = (Math.sin(this.huePhase * Math.PI * 2) + 1) / 2;
+    const fill = Phaser.Display.Color.Interpolate.ColorWithColor(
+      Phaser.Display.Color.ValueToColor(0xffb347),
+      Phaser.Display.Color.ValueToColor(0xffa07a),
+      100,
+      Math.floor(t * 100)
+    );
+    const c = Phaser.Display.Color.GetColor(fill.r, fill.g, fill.b);
+    this.yesCircle.setFillStyle(c);
   }
 
   private checkStamps(): void {
@@ -232,6 +284,7 @@ export class GameScene extends Phaser.Scene {
       this.showFloat("YES CASCADE!", 240, 200);
     }
     this.showFloat(`+${formatCheer(result.cheerGained)}`, 240, 220);
+    this.maybeCelebrateClickMilestone();
     if (result.promptReady && !this.pendingPrompt) {
       this.pendingPrompt = nextPrompt(this.state);
       this.showPrompt(this.pendingPrompt);
@@ -269,6 +322,9 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     btn.on("pointerdown", () => {
       acceptPrompt(this.state, prompt);
+      playPromptYes();
+      this.spawnClickParticles();
+      this.showFloat(`+${formatCheer(prompt.bonus * this.state.prestigeMultiplier)}`, 240, 200);
       this.pendingPrompt = null;
       g.destroy(true);
       this.promptGroup = undefined;
@@ -278,6 +334,44 @@ export class GameScene extends Phaser.Scene {
     });
     g.add([bg, text, flavor, btn]);
     this.promptGroup = g;
+  }
+
+  private showWelcomeBack(awaySeconds: number, earned: number): void {
+    const g = this.add.container(0, 0);
+    const bg = this.add.rectangle(240, 130, 400, 72, 0xfff8dc, 0.95).setStrokeStyle(2, 0xff8c00);
+    const title = this.add.text(240, 108, "Welcome back!", {
+      fontSize: "14px",
+      color: AMBER,
+      fontFamily: "system-ui, sans-serif",
+      fontStyle: "bold",
+    }).setOrigin(0.5);
+    const detail = this.add.text(
+      240,
+      132,
+      `Away ${formatAwayTime(awaySeconds)} · Auto-yesers earned +${formatCheer(earned)} Cheer`,
+      {
+        fontSize: "11px",
+        color: INK,
+        fontFamily: "system-ui, sans-serif",
+        align: "center",
+        wordWrap: { width: 360 },
+      }
+    ).setOrigin(0.5);
+    g.add([bg, title, detail]);
+    this.tweens.add({
+      targets: g,
+      alpha: 0,
+      y: -12,
+      delay: 3200,
+      duration: 600,
+      onComplete: () => g.destroy(true),
+    });
+  }
+
+  private maybeCelebrateClickMilestone(): void {
+    const n = this.state.lifetimeClicks;
+    if (!(CLICK_MILESTONES as readonly number[]).includes(n)) return;
+    this.showFloat(`${n.toLocaleString()} yeses!`, 240, 165);
   }
 
   private showFloat(text: string, x: number, y: number): void {
@@ -307,6 +401,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     this.prestigeBtn.on("pointerdown", () => {
       if (doPrestige(this.state)) {
+        playPrestigeArpeggio();
         this.showFloat("Fresh outlook!", 240, 180);
         trySave(this.state, storage());
         this.checkStamps();
