@@ -13,6 +13,7 @@ import {
   type PlaytestSnapshot,
 } from "../playtest/feedback.js";
 import { buildPlaytestInvite } from "../playtest/recruitment.js";
+import { clearSave } from "../sim/persistence.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -29,7 +30,7 @@ const FEEDBACK_CATEGORIES: readonly { id: FeedbackCategory; label: string }[] = 
   { id: "accessibility", label: "Access" },
 ];
 
-function storage(): Pick<Storage, "getItem" | "setItem"> | undefined {
+function storage(): Pick<Storage, "getItem" | "setItem" | "removeItem"> | undefined {
   if (typeof localStorage === "undefined") return undefined;
   return localStorage;
 }
@@ -158,6 +159,9 @@ export class PlaytestPanel extends Phaser.GameObjects.Container {
 
     this.add(this.button(138, 690, "Copy invite", () => this.copyInvite(), 140));
     this.add(this.button(316, 690, "Export JSON", () => this.exportArchive(), 140));
+    this.add(
+      this.button(227, 722, "Reset game save", () => this.resetGameSave(), 180, "#fff8dc", INK)
+    );
     this.setDepth(100);
     this.refreshSummary();
   }
@@ -219,6 +223,21 @@ export class PlaytestPanel extends Phaser.GameObjects.Container {
     savePlaytestArchive(this.archive, storage());
     this.setStatus("Design vote saved locally.");
     this.refreshSummary();
+  }
+
+  private resetGameSave(): void {
+    const ok = askConfirm(
+      "Reset your game save? Cheer, generators, and upgrades will be cleared. Stamps and lifetime stats reset too. Playtest feedback stays unless you clear browser data."
+    );
+    if (!ok) {
+      this.setStatus("Save not reset.");
+      return;
+    }
+    clearSave(storage());
+    this.setStatus("Save cleared. Reloading…");
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => window.location.reload(), 400);
+    }
   }
 
   private exportArchive(): void {

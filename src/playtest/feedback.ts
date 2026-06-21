@@ -25,6 +25,7 @@ export interface PlaytestSnapshot {
   upgradesPurchased: number;
   promptTierUnlocked: number;
   promptsSeen: number;
+  runPeakCheer: number;
 }
 
 export interface FeedbackInput {
@@ -191,6 +192,7 @@ export function snapshotFromState(state: SimState, cps: number): PlaytestSnapsho
     upgradesPurchased: state.upgPurchased.filter(Boolean).length,
     promptTierUnlocked: promptTierUnlocked(state.totalCheerEarned),
     promptsSeen: state.nextPromptIndex,
+    runPeakCheer: Math.round(state.runPeakCheer ?? 0),
   };
 }
 

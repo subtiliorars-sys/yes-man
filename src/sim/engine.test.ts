@@ -5,6 +5,7 @@ import {
   buyUpgrade,
   canPrestige,
   clickYes,
+  doPrestige,
   createState,
   generatorCost,
   nextPrompt,
@@ -12,7 +13,7 @@ import {
   tick,
   totalCps,
 } from "./engine.js";
-import { PROMPTS, PROMPTS_TIER2, PROMPTS_TIER3, PROMPTS_TIER4, PROMPTS_TIER5, PROMPTS_TIER6, PROMPT_TIER2_THRESHOLD, PROMPT_TIER3_THRESHOLD, PROMPT_TIER4_THRESHOLD, PROMPT_TIER5_THRESHOLD, PROMPT_TIER6_THRESHOLD } from "./economy.js";
+import { PROMPTS, PROMPTS_TIER2, PROMPTS_TIER3, PROMPTS_TIER4, PROMPTS_TIER5, PROMPTS_TIER6, PRESTIGE_THRESHOLD, PROMPT_TIER2_THRESHOLD, PROMPT_TIER3_THRESHOLD, PROMPT_TIER4_THRESHOLD, PROMPT_TIER5_THRESHOLD, PROMPT_TIER6_THRESHOLD } from "./economy.js";
 
 describe("yes-man engine", () => {
   it("click adds cheer at base click value", () => {
@@ -104,5 +105,16 @@ describe("yes-man engine", () => {
         PROMPTS_TIER5.length +
         PROMPTS_TIER6.length
     );
+  });
+
+  it("prestige keeps prompt catalog progress (GDD W19)", () => {
+    const s = createState();
+    s.totalCheerEarned = PRESTIGE_THRESHOLD;
+    for (let i = 0; i < 5; i += 1) nextPrompt(s);
+    expect(s.nextPromptIndex).toBe(5);
+    expect(doPrestige(s)).toBe(true);
+    expect(s.nextPromptIndex).toBe(5);
+    expect(s.cheer).toBe(0);
+    expect(s.runPeakCheer).toBe(0);
   });
 });

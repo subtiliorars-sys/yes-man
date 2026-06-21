@@ -467,7 +467,7 @@ export class GameScene extends Phaser.Scene {
     const body = this.add.text(
       240,
       290,
-      `Resets Cheer & generators · Keeps stamps & prompts\nPermanent mult → x${nextMult}`,
+      `Resets Cheer & generators · Keeps stamps & prompt progress\nPermanent mult → x${nextMult}`,
       {
         fontSize: "10px",
         color: INK,
