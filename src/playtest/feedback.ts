@@ -1,4 +1,5 @@
 import type { SimState } from "../sim/types.js";
+import { promptTierUnlocked } from "../sim/engine.js";
 
 export const PLAYTEST_STORAGE_KEY = "yesman_playtest_feedback_v1";
 
@@ -22,6 +23,8 @@ export interface PlaytestSnapshot {
   stampsEarned: number;
   generatorsOwned: number;
   upgradesPurchased: number;
+  promptTierUnlocked: number;
+  promptsSeen: number;
 }
 
 export interface FeedbackInput {
@@ -90,6 +93,11 @@ export const DESIGN_DECISIONS: readonly DesignDecision[] = [
     id: "prestige_decision",
     title: "Prestige decision",
     prompt: "Does A Fresh Outlook feel understandable and optional?",
+  },
+  {
+    id: "keyboard_yes",
+    title: "Keyboard YES",
+    prompt: "Did Space/Enter to click feel natural on desktop?",
   },
 ];
 
@@ -181,6 +189,8 @@ export function snapshotFromState(state: SimState, cps: number): PlaytestSnapsho
     stampsEarned: state.stampsEarned.length,
     generatorsOwned: state.genOwned.reduce((sum, n) => sum + n, 0),
     upgradesPurchased: state.upgPurchased.filter(Boolean).length,
+    promptTierUnlocked: promptTierUnlocked(state.totalCheerEarned),
+    promptsSeen: state.nextPromptIndex,
   };
 }
 

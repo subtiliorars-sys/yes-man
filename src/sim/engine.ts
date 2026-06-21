@@ -7,7 +7,15 @@ import {
   PRESTIGE_THRESHOLD_GROWTH,
   PROMPTS,
   PROMPTS_TIER2,
+  PROMPTS_TIER3,
+  PROMPTS_TIER4,
+  PROMPTS_TIER5,
+  PROMPTS_TIER6,
   PROMPT_TIER2_THRESHOLD,
+  PROMPT_TIER3_THRESHOLD,
+  PROMPT_TIER4_THRESHOLD,
+  PROMPT_TIER5_THRESHOLD,
+  PROMPT_TIER6_THRESHOLD,
   PROMPT_CLICKS_MAX,
   PROMPT_CLICKS_MIN,
   SYNERGY_UPGRADE_INDEX,
@@ -109,7 +117,29 @@ export function promptPool(state: SimState): PromptDef[] {
   if (state.totalCheerEarned >= PROMPT_TIER2_THRESHOLD) {
     pool.push(...PROMPTS_TIER2);
   }
+  if (state.totalCheerEarned >= PROMPT_TIER3_THRESHOLD) {
+    pool.push(...PROMPTS_TIER3);
+  }
+  if (state.totalCheerEarned >= PROMPT_TIER4_THRESHOLD) {
+    pool.push(...PROMPTS_TIER4);
+  }
+  if (state.totalCheerEarned >= PROMPT_TIER5_THRESHOLD) {
+    pool.push(...PROMPTS_TIER5);
+  }
+  if (state.totalCheerEarned >= PROMPT_TIER6_THRESHOLD) {
+    pool.push(...PROMPTS_TIER6);
+  }
   return pool;
+}
+
+/** Highest prompt tier unlocked by lifetime Cheer earned (1–6). */
+export function promptTierUnlocked(totalCheerEarned: number): number {
+  if (totalCheerEarned >= PROMPT_TIER6_THRESHOLD) return 6;
+  if (totalCheerEarned >= PROMPT_TIER5_THRESHOLD) return 5;
+  if (totalCheerEarned >= PROMPT_TIER4_THRESHOLD) return 4;
+  if (totalCheerEarned >= PROMPT_TIER3_THRESHOLD) return 3;
+  if (totalCheerEarned >= PROMPT_TIER2_THRESHOLD) return 2;
+  return 1;
 }
 
 export function nextPrompt(state: SimState): PromptDef {

@@ -18,6 +18,8 @@ const snapshot = {
   stampsEarned: 2,
   generatorsOwned: 3,
   upgradesPurchased: 1,
+  promptTierUnlocked: 2,
+  promptsSeen: 8,
 };
 
 describe("playtest feedback triage", () => {

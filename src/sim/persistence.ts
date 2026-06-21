@@ -1,13 +1,14 @@
 import type { SaveEnvelope, SimState } from "./types.js";
 import { createState } from "./engine.js";
 import { GENERATOR_DEFS, UPGRADE_DEFS } from "./economy.js";
-import { applyOfflineProgress } from "./offline.js";
+import { applyOfflineProgress, MAX_OFFLINE_SECONDS } from "./offline.js";
 
 export const SAVE_KEY = "yesman_save_v1";
 
 export interface LoadResult {
   state: SimState;
   offlineEarned: number;
+  awaySeconds: number;
 }
 
 function normalizeState(raw: Partial<SimState>): SimState {
@@ -65,8 +66,13 @@ export function tryLoad(storage?: Pick<Storage, "getItem">): LoadResult | null {
       typeof data.lastSavedMs === "number" && data.version === 2
         ? data.lastSavedMs
         : 0;
+    const awayMs =
+      lastSavedMs > 0
+        ? Math.min(Math.max(0, Date.now() - lastSavedMs), MAX_OFFLINE_SECONDS * 1000)
+        : 0;
+    const awaySeconds = awayMs / 1000;
     const offlineEarned = applyOfflineProgress(state, lastSavedMs);
-    return { state, offlineEarned };
+    return { state, offlineEarned, awaySeconds };
   } catch {
     return null;
   }

@@ -8,6 +8,7 @@ import {
   doPrestige,
   formatCheer,
   nextPrompt,
+  prestigeThreshold,
   tick,
   totalCps,
 } from "../sim/engine.js";
@@ -15,9 +16,10 @@ import { UPGRADE_DEFS, YES_VARIANTS } from "../sim/economy.js";
 import { tryLoad, trySave } from "../sim/persistence.js";
 import type { PromptDef, SimState } from "../sim/types.js";
 import { DominoPanel } from "./DominoPanel.js";
+import { formatAwayTime } from "../sim/offline.js";
 import { refreshStamps } from "../sim/stamps.js";
 import { showNewStampToasts, StampBookPanel } from "./StampBookPanel.js";
-import { isSfxMuted, playClickPop, setSfxMuted } from "../audio/sfx.js";
+import { isSfxMuted, playClickPop, playGeneratorTick, playPrestigeArpeggio, playPromptYes, setSfxMuted } from "../audio/sfx.js";
 import { snapshotFromState } from "../playtest/feedback.js";
 import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
 import { PlaytestPanel } from "./PlaytestPanel.js";
@@ -25,6 +27,17 @@ import { PlaytestPanel } from "./PlaytestPanel.js";
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
 const MUTED = "#999977";
+
+const BG_TIERS = [
+  { threshold: 0, color: 0xfff8dc },
+  { threshold: 1_000, color: 0xfff0d4 },
+  { threshold: 10_000, color: 0xffe8c8 },
+  { threshold: 100_000, color: 0xffe0bc },
+  { threshold: 500_000, color: 0xffd8b0 },
+  { threshold: 2_000_000, color: 0xffd0a4 },
+] as const;
+
+const CLICK_MILESTONES = [100, 500, 1_000, 5_000, 10_000] as const;
 
 function storage(): Pick<Storage, "getItem" | "setItem"> | undefined {
   if (typeof localStorage === "undefined") return undefined;
@@ -48,6 +61,12 @@ export class GameScene extends Phaser.Scene {
   private promptGroup?: Phaser.GameObjects.Container;
   private pendingPrompt: PromptDef | null = null;
   private saveTimer?: Phaser.Time.TimerEvent;
+  private bgRect?: Phaser.GameObjects.Rectangle;
+  private huePhase = 0;
+  private genChimeElapsed = 0;
+  private prestigeHint?: Phaser.GameObjects.Text;
+  private prestigeConfirm?: Phaser.GameObjects.Container;
+  private yesHitRadius = 82;
 
   constructor() {
     super("GameScene");
@@ -56,9 +75,13 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     const loaded = tryLoad(storage());
     this.state = loaded?.state ?? createState();
+
+    this.bgRect = this.add.rectangle(240, 400, 480, 800, BG_TIERS[0].color).setOrigin(0.5);
+    this.bgRect.setDepth(-10);
+
     if (loaded && loaded.offlineEarned > 0) {
       this.time.delayedCall(400, () => {
-        this.showFloat(`While away: +${formatCheer(loaded.offlineEarned)} Cheer`, 240, 120);
+        this.showWelcomeBack(loaded.awaySeconds, loaded.offlineEarned);
       });
     }
     this.checkStamps();
@@ -119,7 +142,12 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     this.playtestBtn.on("pointerdown", () => this.openPlaytestHub());
 
-    const circle = this.add.circle(240, 250, 82, 0xffb347).setStrokeStyle(4, 0xff8c00);
+    const narrow =
+      typeof window !== "undefined" &&
+      (window.innerWidth < 520 || window.innerHeight < 740);
+    this.yesHitRadius = narrow ? 94 : 82;
+
+    const circle = this.add.circle(240, 250, this.yesHitRadius, 0xffb347).setStrokeStyle(4, 0xff8c00);
     this.yesCircle = circle;
     this.yesBtn = this.add.text(240, 250, "YES", {
       fontSize: "34px",
@@ -132,6 +160,32 @@ export class GameScene extends Phaser.Scene {
     const onYes = () => this.handleYes();
     circle.on("pointerdown", onYes);
     this.yesBtn.on("pointerdown", onYes);
+
+    if (this.input.keyboard) {
+      const onKeyYes = (event: KeyboardEvent) => {
+        if (
+          event.repeat ||
+          this.pendingPrompt ||
+          this.playtestPanel ||
+          this.stampBook ||
+          this.prestigeConfirm
+        ) {
+          return;
+        }
+        this.handleYes();
+      };
+      this.input.keyboard.on("keydown-SPACE", onKeyYes);
+      this.input.keyboard.on("keydown-ENTER", onKeyYes);
+    }
+
+    if (narrow) {
+      this.yesBtn.setFontSize(38);
+      this.add.text(240, 768, "Scroll for upgrades ↓", {
+        fontSize: "9px",
+        color: MUTED,
+        fontFamily: "system-ui, sans-serif",
+      }).setOrigin(0.5);
+    }
 
     this.dominoPanel = new DominoPanel(this, 16, 330, () => this.state, () => {
       trySave(this.state, storage());
@@ -186,7 +240,48 @@ export class GameScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     tick(this.state, delta / 1000);
+    this.maybePlayGeneratorChime(delta);
+    this.refreshBackgroundTier();
+    this.refreshButtonHue(delta);
     this.refreshUi();
+  }
+
+  private maybePlayGeneratorChime(deltaMs: number): void {
+    const cps = totalCps(this.state);
+    if (cps <= 0) return;
+    this.genChimeElapsed += deltaMs;
+    if (this.genChimeElapsed < 2000) return;
+    this.genChimeElapsed = 0;
+    const owned: number[] = [];
+    this.state.genOwned.forEach((n, i) => {
+      for (let k = 0; k < n; k += 1) owned.push(i);
+    });
+    if (owned.length === 0) return;
+    const pick = owned[Math.floor(Math.random() * owned.length)] ?? 0;
+    playGeneratorTick(pick);
+  }
+
+  private refreshBackgroundTier(): void {
+    if (!this.bgRect) return;
+    let color: number = BG_TIERS[0].color;
+    for (const tier of BG_TIERS) {
+      if (this.state.totalCheerEarned >= tier.threshold) color = tier.color;
+    }
+    this.bgRect.setFillStyle(color);
+  }
+
+  /** GDD: button background shifts slowly through warm colors. */
+  private refreshButtonHue(delta: number): void {
+    this.huePhase += delta / 300_000;
+    const t = (Math.sin(this.huePhase * Math.PI * 2) + 1) / 2;
+    const fill = Phaser.Display.Color.Interpolate.ColorWithColor(
+      Phaser.Display.Color.ValueToColor(0xffb347),
+      Phaser.Display.Color.ValueToColor(0xffa07a),
+      100,
+      Math.floor(t * 100)
+    );
+    const c = Phaser.Display.Color.GetColor(fill.r, fill.g, fill.b);
+    this.yesCircle.setFillStyle(c);
   }
 
   private checkStamps(): void {
@@ -232,6 +327,7 @@ export class GameScene extends Phaser.Scene {
       this.showFloat("YES CASCADE!", 240, 200);
     }
     this.showFloat(`+${formatCheer(result.cheerGained)}`, 240, 220);
+    this.maybeCelebrateClickMilestone();
     if (result.promptReady && !this.pendingPrompt) {
       this.pendingPrompt = nextPrompt(this.state);
       this.showPrompt(this.pendingPrompt);
@@ -269,6 +365,9 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     btn.on("pointerdown", () => {
       acceptPrompt(this.state, prompt);
+      playPromptYes();
+      this.spawnClickParticles();
+      this.showFloat(`+${formatCheer(prompt.bonus * this.state.prestigeMultiplier)}`, 240, 200);
       this.pendingPrompt = null;
       g.destroy(true);
       this.promptGroup = undefined;
@@ -278,6 +377,44 @@ export class GameScene extends Phaser.Scene {
     });
     g.add([bg, text, flavor, btn]);
     this.promptGroup = g;
+  }
+
+  private showWelcomeBack(awaySeconds: number, earned: number): void {
+    const g = this.add.container(0, 0);
+    const bg = this.add.rectangle(240, 130, 400, 72, 0xfff8dc, 0.95).setStrokeStyle(2, 0xff8c00);
+    const title = this.add.text(240, 108, "Welcome back!", {
+      fontSize: "14px",
+      color: AMBER,
+      fontFamily: "system-ui, sans-serif",
+      fontStyle: "bold",
+    }).setOrigin(0.5);
+    const detail = this.add.text(
+      240,
+      132,
+      `Away ${formatAwayTime(awaySeconds)} · Auto-yesers earned +${formatCheer(earned)} Cheer`,
+      {
+        fontSize: "11px",
+        color: INK,
+        fontFamily: "system-ui, sans-serif",
+        align: "center",
+        wordWrap: { width: 360 },
+      }
+    ).setOrigin(0.5);
+    g.add([bg, title, detail]);
+    this.tweens.add({
+      targets: g,
+      alpha: 0,
+      y: -12,
+      delay: 3200,
+      duration: 600,
+      onComplete: () => g.destroy(true),
+    });
+  }
+
+  private maybeCelebrateClickMilestone(): void {
+    const n = this.state.lifetimeClicks;
+    if (!(CLICK_MILESTONES as readonly number[]).includes(n)) return;
+    this.showFloat(`${n.toLocaleString()} yeses!`, 240, 165);
   }
 
   private showFloat(text: string, x: number, y: number): void {
@@ -298,21 +435,79 @@ export class GameScene extends Phaser.Scene {
 
   private ensurePrestigeButton(): void {
     if (this.prestigeBtn) return;
-    this.prestigeBtn = this.add.text(240, 318, "", {
+    this.prestigeBtn = this.add.text(240, 306, "", {
       fontSize: "12px",
       color: "#ffffff",
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#6a5acd",
       padding: { x: 10, y: 6 },
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-    this.prestigeBtn.on("pointerdown", () => {
+    this.prestigeHint = this.add.text(240, 328, "", {
+      fontSize: "9px",
+      color: "#7a6aad",
+      fontFamily: "system-ui, sans-serif",
+      align: "center",
+      wordWrap: { width: 420 },
+    }).setOrigin(0.5, 0);
+    this.prestigeBtn.on("pointerdown", () => this.openPrestigeConfirm());
+  }
+
+  private openPrestigeConfirm(): void {
+    if (this.prestigeConfirm || !canPrestige(this.state)) return;
+    const g = this.add.container(0, 0);
+    const dim = this.add.rectangle(240, 400, 480, 800, 0x000000, 0.35).setInteractive();
+    const card = this.add.rectangle(240, 300, 360, 130, 0xfff8dc).setStrokeStyle(2, 0x6a5acd);
+    const nextMult = (1 + (this.state.prestiges + 1) * 0.25).toFixed(2);
+    const title = this.add.text(240, 262, "A Fresh Outlook?", {
+      fontSize: "14px",
+      color: INK,
+      fontFamily: "system-ui, sans-serif",
+      fontStyle: "bold",
+    }).setOrigin(0.5);
+    const body = this.add.text(
+      240,
+      290,
+      `Resets Cheer & generators · Keeps stamps & prompts\nPermanent mult → x${nextMult}`,
+      {
+        fontSize: "10px",
+        color: INK,
+        fontFamily: "system-ui, sans-serif",
+        align: "center",
+        wordWrap: { width: 320 },
+      }
+    ).setOrigin(0.5);
+    const yesBtn = this.add.text(190, 330, "Yes, refresh", {
+      fontSize: "11px",
+      color: "#ffffff",
+      fontFamily: "system-ui, sans-serif",
+      backgroundColor: "#6a5acd",
+      padding: { x: 8, y: 4 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    const noBtn = this.add.text(290, 330, "Not yet", {
+      fontSize: "11px",
+      color: INK,
+      fontFamily: "system-ui, sans-serif",
+      backgroundColor: "#fff8dc",
+      padding: { x: 8, y: 4 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    const close = () => {
+      g.destroy(true);
+      this.prestigeConfirm = undefined;
+    };
+    yesBtn.on("pointerdown", () => {
       if (doPrestige(this.state)) {
+        playPrestigeArpeggio();
         this.showFloat("Fresh outlook!", 240, 180);
         trySave(this.state, storage());
         this.checkStamps();
         this.refreshUi();
       }
+      close();
     });
+    noBtn.on("pointerdown", close);
+    dim.on("pointerdown", close);
+    g.add([dim, card, title, body, yesBtn, noBtn]);
+    this.prestigeConfirm = g;
   }
 
   private refreshUi(): void {
@@ -343,8 +538,15 @@ export class GameScene extends Phaser.Scene {
       this.ensurePrestigeButton();
       this.prestigeBtn!.setVisible(true);
       this.prestigeBtn!.setText("A Fresh Outlook (prestige)");
-    } else if (this.prestigeBtn) {
-      this.prestigeBtn.setVisible(false);
+      const threshold = prestigeThreshold(this.state);
+      const nextMult = (1 + (this.state.prestiges + 1) * 0.25).toFixed(2);
+      this.prestigeHint?.setVisible(true);
+      this.prestigeHint?.setText(
+        `At ${formatCheer(threshold)} earned · reset run → x${nextMult} mult · optional`
+      );
+    } else {
+      if (this.prestigeBtn) this.prestigeBtn.setVisible(false);
+      this.prestigeHint?.setVisible(false);
     }
 
     this.updateStampButtonLabel();

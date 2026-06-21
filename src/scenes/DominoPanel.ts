@@ -18,6 +18,7 @@ type RefreshCb = () => void;
 export class DominoPanel extends Phaser.GameObjects.Container {
   private dominoSprites: Phaser.GameObjects.Container[] = [];
   private onChanged: RefreshCb;
+  private flavorText?: Phaser.GameObjects.Text;
 
   constructor(
     scene: Phaser.Scene,
@@ -98,6 +99,11 @@ export class DominoPanel extends Phaser.GameObjects.Container {
 
       piece.add([rect, icon, label]);
 
+      if (owned > 0 || !locked) {
+        rect.on("pointerover", () => this.showFlavor(def.flavor));
+        rect.on("pointerout", () => this.hideFlavor());
+      }
+
       if (owned > 0) {
         const badge = this.scene.add
           .text(14, -22, String(owned), {
@@ -153,5 +159,23 @@ export class DominoPanel extends Phaser.GameObjects.Container {
       duration: 120,
       yoyo: true,
     });
+  }
+
+  private showFlavor(line: string): void {
+    this.flavorText?.destroy();
+    this.flavorText = this.scene.add.text(224, 148, line, {
+      fontSize: "9px",
+      color: "#4a3728",
+      fontFamily: "system-ui, sans-serif",
+      fontStyle: "italic",
+      wordWrap: { width: 420 },
+      align: "center",
+    }).setOrigin(0.5, 0);
+    this.add(this.flavorText);
+  }
+
+  private hideFlavor(): void {
+    this.flavorText?.destroy();
+    this.flavorText = undefined;
   }
 }
