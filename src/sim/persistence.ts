@@ -26,6 +26,7 @@ function normalizeState(raw: Partial<SimState>): SimState {
     clicksSincePrompt: Math.max(0, raw.clicksSincePrompt ?? 0),
     lifetimeClicks: Math.max(0, raw.lifetimeClicks ?? 0),
     lifetimeCascades: Math.max(0, raw.lifetimeCascades ?? 0),
+    runPeakCheer: Math.max(0, raw.runPeakCheer ?? 0),
     stampsEarned: Array.isArray(raw.stampsEarned)
       ? raw.stampsEarned.filter((id): id is string => typeof id === "string")
       : [],
@@ -51,6 +52,16 @@ export function trySave(state: SimState, storage?: Pick<Storage, "setItem">): vo
     storage.setItem(SAVE_KEY, JSON.stringify(serializeState(state)));
   } catch {
     /* quota / private mode — non-fatal */
+  }
+}
+
+/** Clear game save — playtest / fresh-start utility (requires explicit user confirm in UI). */
+export function clearSave(storage?: Pick<Storage, "removeItem">): void {
+  if (!storage) return;
+  try {
+    storage.removeItem(SAVE_KEY);
+  } catch {
+    /* ignore */
   }
 }
 

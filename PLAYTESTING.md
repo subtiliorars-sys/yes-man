@@ -8,7 +8,7 @@ Goal: invite as many useful playtesters as possible while keeping feedback ethic
 - Public playtest links can use `?playtest=1` to open the hub automatically.
 - The hub has a **Copy invite** button that prepares a tester-friendly share message.
 - Testers can submit category-tagged feedback and vote on current design decisions.
-- Each submission includes an opt-in local play snapshot: Cheer, CPS, clicks, prestiges, stamps, generators, and upgrades.
+- Each submission includes an opt-in local play snapshot: Cheer, CPS, clicks, prestiges, stamps, generators, upgrades, prompt tier unlocked, prompts seen, and run peak Cheer.
 - Feedback is stored locally in the browser until the tester exports JSON and shares it with the team.
 - The export includes triage buckets:
   - `actionable`: detailed enough to use directly in issue planning.

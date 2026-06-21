@@ -32,6 +32,8 @@ export const STAMP_DEFS: readonly StampDef[] = [
   { id: "tier5_unlock", label: "Cosmic Yes", icon: "🌠" },
   { id: "tier6_unlock", label: "Meta Yes", icon: "🪞" },
   { id: "veteran_yes", label: "5 Prestige", icon: "🏅" },
+  { id: "yes_sage", label: "10 Prestige", icon: "🧘" },
+  { id: "overflow_run", label: "1M Run", icon: "🌊" },
   { id: "clicks_1k", label: "1K Clicks", icon: "👍" },
 ];
 
@@ -71,6 +73,10 @@ function qualifies(state: SimState, id: string): boolean {
       return state.totalCheerEarned >= PROMPT_TIER6_THRESHOLD;
     case "veteran_yes":
       return state.prestiges >= 5;
+    case "yes_sage":
+      return state.prestiges >= 10;
+    case "overflow_run":
+      return (state.runPeakCheer ?? 0) >= 1_000_000;
     case "clicks_1k":
       return state.lifetimeClicks >= 1_000;
     default:

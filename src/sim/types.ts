@@ -35,6 +35,8 @@ export interface SimState {
   lifetimeClicks: number;
   lifetimeCascades: number;
   stampsEarned: string[];
+  /** Peak Cheer held in the current run (resets on prestige). */
+  runPeakCheer: number;
 }
 
 export interface SaveEnvelope {

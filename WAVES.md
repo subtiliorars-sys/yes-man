@@ -1,97 +1,52 @@
 # Yes Man — Wave Registry
 
-One wave = one PR. Branch prefix: `automation/wave-*` or `work/sprint-*`. Verify: `npm run verify`.
+One wave = one PR. Branch prefix: `automation/wave-*` or `work/*`. Verify: `npm run verify`.
 
-## Active queue — Sprint 2026-06-20 (12 improvements)
+## Active queue
 
-### Wave YM-W7 — Tier 3 prompt pool
+### Wave YM-W19 — Prestige keeps prompt progress (GDD fix)
 **Status:** `in_progress`  
-**Branch:** `work/sprint-ym-12`
-- [x] 10 tier-3 prompts (unlock 25K total Cheer)
-- [x] Wire `promptPool()` tier selection
-- [x] Tests
+**Branch:** `work/overnight-ym-w19`
+- [x] Stop resetting `nextPromptIndex` on prestige
+- [x] Test + confirm dialog copy update
 
-### Wave YM-W8 — Tier 4 heartfelt prompts
+### Wave YM-W20 — GDD achievement stamps
 **Status:** `in_progress`  
-**Branch:** `work/sprint-ym-12`
-- [x] 10 tier-4 prompts (unlock 100K total Cheer)
-- [x] Stamp: Weird Yes / Heart Yes tier unlocks
+**Branch:** `work/overnight-ym-w19`
+- [x] Yes Sage (10 prestige)
+- [x] Overflowing run (1M Cheer peak in single run via `runPeakCheer`)
 
-### Wave YM-W9 — Keyboard + click milestones
+### Wave YM-W21 — Playtest reset save
 **Status:** `in_progress`  
-**Branch:** `work/sprint-ym-12`
-- [x] Space/Enter to YES (no key repeat; blocked during prompts)
-- [x] Milestone float at 100/500/1K/5K/10K lifetime clicks
-- [x] Stamp: 1K Clicks
+**Branch:** `work/overnight-ym-w19`
+- [x] `clearSave()` in persistence
+- [x] Reset game save button in Playtest hub (confirm + reload)
 
-### Wave YM-W10 — Audio juice (prompt + prestige)
+### Wave YM-W22 — Playtest docs sync
 **Status:** `in_progress`  
-**Branch:** `work/sprint-ym-12`
-- [x] Prompt-accept ascending chime
-- [x] Prestige rising arpeggio (~2s)
+**Branch:** `work/overnight-ym-w19`
+- [x] PLAYTESTING.md snapshot fields
+- [x] Export snapshot: `runPeakCheer`
 
-### Wave YM-W11 — Visual progression polish
-**Status:** `in_progress`  
-**Branch:** `work/sprint-ym-12`
-- [x] Background cream tiers by total Cheer earned
-- [x] YES button warm hue cycle (5-min feel)
+### Wave YM-W23 — Owner visual check prep
+**Status:** `pending`  
+- [ ] Owner visual check on overflow at 480×800 (domino + prestige confirm)
+- [ ] itch.io share kit + screenshot captions (revenue wave YM-W8)
 
-### Wave YM-W12 — Welcome back + generator flavor
-**Status:** `in_progress`  
-**Branch:** `work/sprint-ym-12`
-- [x] Rich offline welcome card (time away + earnings)
-- [x] Domino hover flavor tooltips
+## Completed — Sprint 2026-06-20 (W7–W18)
 
-### Wave YM-W13 — Tier 5 cosmic prompts
-**Status:** `done`  
-- [x] 10 tier-5 prompts (unlock 500K Cheer)
-- [x] Wire tier + Cosmic Yes stamp
+Merged to `main` via PR #5 · Deployed GitHub Pages.
 
-### Wave YM-W14 — Tier 6 fourth-wall prompts
-**Status:** `done`  
-- [x] 10 tier-6 prompts (unlock 2M Cheer)
-- [x] Completionist stamp update via `promptPool()`
+W7–W18: tier 3–6 prompts (60 total), keyboard YES, click milestones, SFX juice, background tiers, welcome back, domino flavor, generator chimes, prestige UX, playtest export, mobile tap targets.
 
-### Wave YM-W15 — Generator tick chimes
-**Status:** `done`  
-- [x] Gentle CPS-cycle chime (pitch per generator type)
-- [x] Mute-friendly; no asset files
+## Completed waves (earlier)
 
-### Wave YM-W16 — Prestige preview tooltip
-**Status:** `done`  
-- [x] Threshold + multiplier preview line
-- [x] Confirm dialog (Yes / Not yet)
-
-### Wave YM-W17 — Playtest export enrichment
-**Status:** `done`  
-- [x] Snapshot: promptTierUnlocked, promptsSeen
-- [x] Design vote: keyboard_yes
-
-### Wave YM-W18 — Mobile tap targets + 480×800 pass
-**Status:** `done`  
-- [x] Larger YES hit area on narrow viewports
-- [x] Scroll hint for upgrades list
-- [ ] Owner visual check on overflow at 480×800
-
-## Completed waves
-
-### Wave YM-W1 — Phaser vertical slice
-**Status:** `done` · **Completed:** 2026-06-13
-
-### Wave YM-W2 — Persistence + upgrades + prestige
-**Status:** `done` · **Completed:** 2026-06-13
-
-### Wave YM-W3 — Domino / wishing-well upgrade UI
-**Status:** `done` · **Completed:** 2026-06-13
-
-### Wave YM-W4 — Content expansion (prompts + stamps + offline)
-**Status:** `done` · **Completed:** 2026-06-13 · PR #1 merged
-
-### Wave YM-W5 — Prompt tiers + more copy
-**Status:** `done` · **Completed:** 2026-06-13 · PR #1 merged
-
-### Wave YM-W6 — Click juice + sound stubs
-**Status:** `done` · **Completed:** 2026-06-13 · PR #2 merged
+### Wave YM-W1 — Phaser vertical slice · `done` 2026-06-13
+### Wave YM-W2 — Persistence + upgrades + prestige · `done` 2026-06-13
+### Wave YM-W3 — Domino / wishing-well upgrade UI · `done` 2026-06-13
+### Wave YM-W4 — Content expansion · `done` PR #1
+### Wave YM-W5 — Prompt tiers + tier 2 · `done` PR #1
+### Wave YM-W6 — Click juice + sound stubs · `done` PR #2
 
 ## Blocked (owner)
 - Steam store page copy / marketing assets

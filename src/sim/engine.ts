@@ -37,6 +37,7 @@ export function createState(): SimState {
     lifetimeClicks: 0,
     lifetimeCascades: 0,
     stampsEarned: [],
+    runPeakCheer: 0,
   };
 }
 
@@ -84,6 +85,7 @@ function addCheer(state: SimState, amount: number): void {
   if (amount <= 0) return;
   state.cheer += amount;
   state.totalCheerEarned += amount;
+  state.runPeakCheer = Math.max(state.runPeakCheer ?? 0, state.cheer);
 }
 
 export interface ClickResult {
@@ -194,7 +196,7 @@ export function canPrestige(state: SimState): boolean {
   );
 }
 
-/** Reset run progress; keep prestige multiplier bump. Ethics: optional, never punishing. */
+/** Reset run progress; keep prestige multiplier bump and prompt catalog progress (GDD). */
 export function doPrestige(state: SimState): boolean {
   if (!canPrestige(state)) return false;
   state.prestiges += 1;
@@ -203,8 +205,8 @@ export function doPrestige(state: SimState): boolean {
   state.clickValue = 1;
   state.genOwned = GENERATOR_DEFS.map(() => 0);
   state.upgPurchased = UPGRADE_DEFS.map(() => false);
-  state.nextPromptIndex = 0;
   state.clicksSincePrompt = 0;
+  state.runPeakCheer = 0;
   return true;
 }
 

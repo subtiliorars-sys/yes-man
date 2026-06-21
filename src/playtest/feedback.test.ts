@@ -20,6 +20,7 @@ const snapshot = {
   upgradesPurchased: 1,
   promptTierUnlocked: 2,
   promptsSeen: 8,
+  runPeakCheer: 1200,
 };
 
 describe("playtest feedback triage", () => {

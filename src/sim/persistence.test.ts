@@ -1,14 +1,15 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { createState, doPrestige, buyUpgrade } from "./engine.js";
-import { tryLoad, trySave, SAVE_KEY } from "./persistence.js";
+import { tryLoad, trySave, clearSave, SAVE_KEY } from "./persistence.js";
 import { PRESTIGE_THRESHOLD } from "./economy.js";
 
-function memStorage(): Pick<Storage, "getItem" | "setItem"> & { map: Map<string, string> } {
+function memStorage(): Pick<Storage, "getItem" | "setItem" | "removeItem"> & { map: Map<string, string> } {
   const map = new Map<string, string>();
   return {
     map,
     getItem: (k) => (map.has(k) ? (map.get(k) as string) : null),
     setItem: (k, v) => void map.set(k, v),
+    removeItem: (k) => void map.delete(k),
   };
 }
 
@@ -76,5 +77,14 @@ describe("persistence", () => {
     const loaded = tryLoad(s);
     expect(loaded?.state.stampsEarned).toEqual([]);
     expect(loaded?.state.lifetimeClicks).toBe(0);
+  });
+
+  it("clearSave removes stored game data", () => {
+    const state = createState();
+    state.cheer = 99;
+    trySave(state, s);
+    expect(s.map.has(SAVE_KEY)).toBe(true);
+    clearSave(s);
+    expect(tryLoad(s)).toBeNull();
   });
 });
