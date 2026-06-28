@@ -29,9 +29,10 @@ One wave = one PR. Branch prefix: `automation/wave-*` or `work/*`. Verify: `npm 
 - [x] Export snapshot: `runPeakCheer`
 
 ### Wave YM-W23 — Owner visual check prep
-**Status:** `pending`  
+**Status:** `in_progress`  
+**Branch:** `automation/wave-ym-w23-itchio-kit` (partial — docs only)
 - [ ] Owner visual check on overflow at 480×800 (domino + prestige confirm)
-- [ ] itch.io share kit + screenshot captions (revenue wave YM-W8)
+- [x] itch.io share kit + screenshot captions (revenue wave YM-W8) — `docs/ITCHIO_SHARE_KIT.md`
 
 ## Completed — Sprint 2026-06-20 (W7–W18)
 
