@@ -16,6 +16,7 @@ const snapshot = {
   lifetimeClicks: 42,
   prestiges: 0,
   stampsEarned: 2,
+  stampIds: ["first_yes", "prompt_master"],
   generatorsOwned: 3,
   upgradesPurchased: 1,
   promptTierUnlocked: 2,

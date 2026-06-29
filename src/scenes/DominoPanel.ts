@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { applyMinTapTarget } from "../ui/tapTarget.js";
 import { buyGenerator, formatCheer, generatorCost } from "../sim/engine.js";
 import { GENERATOR_DEFS } from "../sim/economy.js";
 import type { SimState } from "../sim/types.js";
@@ -125,7 +126,7 @@ export class DominoPanel extends Phaser.GameObjects.Container {
           })
           .setOrigin(0.5);
         piece.add(costTxt);
-        rect.setInteractive({ useHandCursor: true });
+        applyMinTapTarget(rect);
         rect.on("pointerdown", () => {
           if (buyGenerator(state, i)) {
             this.pulsePiece(piece);
