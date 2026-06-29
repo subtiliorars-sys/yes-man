@@ -21,6 +21,7 @@ export interface PlaytestSnapshot {
   lifetimeClicks: number;
   prestiges: number;
   stampsEarned: number;
+  stampIds: string[];
   generatorsOwned: number;
   upgradesPurchased: number;
   promptTierUnlocked: number;
@@ -188,6 +189,7 @@ export function snapshotFromState(state: SimState, cps: number): PlaytestSnapsho
     lifetimeClicks: state.lifetimeClicks,
     prestiges: state.prestiges,
     stampsEarned: state.stampsEarned.length,
+    stampIds: [...state.stampsEarned],
     generatorsOwned: state.genOwned.reduce((sum, n) => sum + n, 0),
     upgradesPurchased: state.upgPurchased.filter(Boolean).length,
     promptTierUnlocked: promptTierUnlocked(state.totalCheerEarned),
