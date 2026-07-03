@@ -4,41 +4,36 @@ One wave = one PR. Branch prefix: `automation/wave-*` or `work/*`. Verify: `npm 
 
 ## Active queue
 
-### Wave YM-W19 — Prestige keeps prompt progress (GDD fix)
-**Status:** `in_progress`  
-**Branch:** `work/overnight-ym-w19`
-- [x] Stop resetting `nextPromptIndex` on prestige
-- [x] Test + confirm dialog copy update
+_(empty — next wave after YM-W24 merges)_
 
-### Wave YM-W20 — GDD achievement stamps
-**Status:** `in_progress`  
-**Branch:** `work/overnight-ym-w19`
-- [x] Yes Sage (10 prestige)
-- [x] Overflowing run (1M Cheer peak in single run via `runPeakCheer`)
+## Completed — GDD fixes (W19–W22) · merged to `main` 2026-06-21
 
-### Wave YM-W21 — Playtest reset save
-**Status:** `in_progress`  
-**Branch:** `work/overnight-ym-w19`
-- [x] `clearSave()` in persistence
-- [x] Reset game save button in Playtest hub (confirm + reload)
+### Wave YM-W19 — Prestige keeps prompt progress · `done`
+- Stop resetting `nextPromptIndex` on prestige; test + confirm dialog copy update
 
-### Wave YM-W22 — Playtest docs sync
-**Status:** `in_progress`  
-**Branch:** `work/overnight-ym-w19`
-- [x] PLAYTESTING.md snapshot fields
-- [x] Export snapshot: `runPeakCheer`
+### Wave YM-W20 — GDD achievement stamps · `done`
+- Yes Sage (10 prestige); Overflowing run (1M Cheer peak via `runPeakCheer`)
 
-### Wave YM-W23 — Owner visual check prep
-**Status:** `in_progress`  
-**Branch:** `automation/wave-ym-w23-itchio-kit` (partial — docs only)
-- [ ] Owner visual check on overflow at 480×800 (domino + prestige confirm)
-- [x] itch.io share kit + screenshot captions (revenue wave YM-W8) — `docs/ITCHIO_SHARE_KIT.md`
+### Wave YM-W21 — Playtest reset save · `done`
+- `clearSave()` in persistence; Reset game save button in Playtest hub
+
+### Wave YM-W22 — Playtest docs sync · `done`
+- PLAYTESTING.md snapshot fields; export snapshot `runPeakCheer`
+
+### Wave YM-W23 — itch.io share kit · `done` 2026-07-03
+**Branch:** `automation/wave-ym-w23-itchio-kit` · PR #7
+- [x] itch.io share kit + screenshot captions — `docs/ITCHIO_SHARE_KIT.md`
 
 ## Completed — Sprint 2026-06-20 (W7–W18)
 
 Merged to `main` via PR #5 · Deployed GitHub Pages.
 
 W7–W18: tier 3–6 prompts (60 total), keyboard YES, click milestones, SFX juice, background tiers, welcome back, domino flavor, generator chimes, prestige UX, playtest export, mobile tap targets.
+
+### Wave YM-W24 — Mobile tap targets + export snapshot polish · `done` 2026-06-28
+**Branch:** `automation/wave-ym-w24-mobile-tap-polish`
+- [x] 44px min hit areas on header, playtest, prestige, prompt, domino buy buttons
+- [x] Export snapshot includes earned `stampIds` for triage
 
 ## Completed waves (earlier)
 

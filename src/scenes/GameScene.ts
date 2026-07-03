@@ -23,6 +23,7 @@ import { isSfxMuted, playClickPop, playGeneratorTick, playPrestigeArpeggio, play
 import { snapshotFromState } from "../playtest/feedback.js";
 import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
 import { PlaytestPanel } from "./PlaytestPanel.js";
+import { applyMinTapTarget } from "../ui/tapTarget.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -99,7 +100,8 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#fff8dc",
       padding: { x: 6, y: 3 },
-    }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(1, 0.5);
+    applyMinTapTarget(this.stampBtn);
     this.stampBtn.on("pointerdown", () => this.openStampBook());
 
     this.muteBtn = this.add.text(16, 22, isSfxMuted() ? "Sound off" : "Sound on", {
@@ -108,7 +110,8 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#fff8dc",
       padding: { x: 5, y: 2 },
-    }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0, 0.5);
+    applyMinTapTarget(this.muteBtn);
     this.muteBtn.on("pointerdown", () => {
       setSfxMuted(!isSfxMuted());
       this.muteBtn?.setText(isSfxMuted() ? "Sound off" : "Sound on");
@@ -139,7 +142,8 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#ff8c00",
       padding: { x: 8, y: 4 },
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5);
+    applyMinTapTarget(this.playtestBtn);
     this.playtestBtn.on("pointerdown", () => this.openPlaytestHub());
 
     const narrow =
@@ -208,7 +212,7 @@ export class GameScene extends Phaser.Scene {
         fontFamily: "monospace",
         wordWrap: { width: 448 },
       });
-      row.setInteractive({ useHandCursor: true });
+      applyMinTapTarget(row);
       row.on("pointerdown", () => {
         if (buyUpgrade(this.state, i)) {
           trySave(this.state, storage());
@@ -362,7 +366,8 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       backgroundColor: AMBER,
       padding: { x: 10, y: 5 },
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5);
+    applyMinTapTarget(btn);
     btn.on("pointerdown", () => {
       acceptPrompt(this.state, prompt);
       playPromptYes();
@@ -441,7 +446,8 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#6a5acd",
       padding: { x: 10, y: 6 },
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5);
+    applyMinTapTarget(this.prestigeBtn);
     this.prestigeHint = this.add.text(240, 328, "", {
       fontSize: "9px",
       color: "#7a6aad",
@@ -482,14 +488,16 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#6a5acd",
       padding: { x: 8, y: 4 },
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5);
+    applyMinTapTarget(yesBtn);
     const noBtn = this.add.text(290, 330, "Not yet", {
       fontSize: "11px",
       color: INK,
       fontFamily: "system-ui, sans-serif",
       backgroundColor: "#fff8dc",
       padding: { x: 8, y: 4 },
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5);
+    applyMinTapTarget(noBtn);
     const close = () => {
       g.destroy(true);
       this.prestigeConfirm = undefined;
@@ -529,7 +537,7 @@ export class GameScene extends Phaser.Scene {
         row.disableInteractive();
         return;
       }
-      row.setInteractive({ useHandCursor: true });
+      applyMinTapTarget(row);
       row.setColor(this.state.cheer >= def.cost ? INK : MUTED);
       row.setText(`${def.name} — ${def.desc} (${formatCheer(def.cost)})`);
     });
