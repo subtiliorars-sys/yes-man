@@ -21,6 +21,8 @@ No dark patterns: full offline progress, optional prestige, no FOMO timers. See 
 
 The build includes a local-first **Playtest + feedback** hub for opt-in tester notes, design votes, triage, invite sharing, and JSON export. See `PLAYTESTING.md` for the public playtest URL, community outreach copy, deployment notes, and the feedback review workflow.
 
+Distribution drafts (itch.io share kit) live in `docs/ITCHIO_SHARE_KIT.md` — internal only until owner ethics review.
+
 After GitHub Pages deploys, share the playtest landing page:
 
 ```text
