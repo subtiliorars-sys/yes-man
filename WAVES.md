@@ -4,11 +4,7 @@ One wave = one PR. Branch prefix: `automation/wave-*` or `work/*`. Verify: `npm 
 
 ## Active queue
 
-### Wave YM-W23 — Owner visual check prep
-**Status:** `in_progress`  
-**Branch:** `automation/wave-ym-w23-itchio-kit` (partial — docs only)
-- [ ] Owner visual check on overflow at 480×800 (domino + prestige confirm)
-- [x] itch.io share kit + screenshot captions (revenue wave YM-W8) — `docs/ITCHIO_SHARE_KIT.md`
+_(empty — next wave after YM-W24 merges)_
 
 ## Completed — GDD fixes (W19–W22) · merged to `main` 2026-06-21
 
@@ -23,6 +19,10 @@ One wave = one PR. Branch prefix: `automation/wave-*` or `work/*`. Verify: `npm 
 
 ### Wave YM-W22 — Playtest docs sync · `done`
 - PLAYTESTING.md snapshot fields; export snapshot `runPeakCheer`
+
+### Wave YM-W23 — itch.io share kit · `done` 2026-07-03
+**Branch:** `automation/wave-ym-w23-itchio-kit` · PR #7
+- [x] itch.io share kit + screenshot captions — `docs/ITCHIO_SHARE_KIT.md`
 
 ## Completed — Sprint 2026-06-20 (W7–W18)
 

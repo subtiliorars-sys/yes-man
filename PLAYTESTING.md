@@ -2,6 +2,8 @@
 
 Goal: invite as many useful playtesters as possible while keeping feedback ethical, consent-based, and reviewable.
 
+For itch.io listing drafts (title, tags, screenshot captions, store disclaimer), see `docs/ITCHIO_SHARE_KIT.md`. Owner must approve before any of that copy goes on a public store page.
+
 ## What is in the build
 
 - The game has a **Playtest + feedback** button below the score area.
