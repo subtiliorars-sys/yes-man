@@ -6,6 +6,7 @@ import { isReduceMotion, setReduceMotion } from "../sim/prefs.js";
 import { STAMP_DEFS, earnedStampCount } from "../sim/stamps.js";
 import { SECRET_COUNT, foundSecretCount } from "../sim/secrets.js";
 import type { SimState } from "../sim/types.js";
+import { applyMinTapTarget } from "../ui/tapTarget.js";
 
 const AMBER = "#ff8c00";
 const INK = "#4a3728";
@@ -63,6 +64,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
       .text(436, 112, "✕", { fontSize: "16px", color: INK, fontFamily: "system-ui, sans-serif" })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
+    applyMinTapTarget(close);
     close.on("pointerdown", () => this.dismiss());
     this.add(close);
 
@@ -120,6 +122,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
       })
       .setOrigin(1, 0.5)
       .setInteractive({ useHandCursor: true });
+    applyMinTapTarget(btn);
     const paint = (): void => {
       const on = isOn();
       btn.setText(on ? "On" : "Off");
@@ -271,6 +274,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
       })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
+    applyMinTapTarget(btn);
     btn.on("pointerdown", onTap);
     return btn;
   }
