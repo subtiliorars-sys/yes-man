@@ -12,7 +12,9 @@ if (Test-Path "package-lock.json") {
 
 $env:CORPS_PAGES_BASE = "/yes-man/"
 npm run build
-npm run test
+if ((Get-Content package.json -Raw) -match '"test"') {
+  npm run test
+}
 
 $stage = Join-Path $env:TEMP ("yes-man-gh-pages-" + [guid]::NewGuid().ToString("n"))
 New-Item -ItemType Directory -Path $stage | Out-Null
