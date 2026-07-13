@@ -79,11 +79,20 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
       if (nowMuted) this.cb.onSecret("mute_zen");
       this.cb.onChange();
     });
-    const motion = this.makeToggleRow(scene, 184, "Motion", () => !isReduceMotion(), () => {
+    const motion = this.makeToggleRow(scene, 184, "Reduce motion", () => isReduceMotion(), () => {
       setReduceMotion(!isReduceMotion());
       this.cb.onChange();
     });
     this.add([sound, motion]);
+    this.add(
+      scene.add
+        .text(48, 206, "Calmer visuals — fewer particles and tweens when on.", {
+          fontSize: "9px",
+          color: MUTED,
+          fontFamily: "system-ui, sans-serif",
+        })
+        .setOrigin(0, 0.5)
+    );
   }
 
   /** A "Label …… [On/Off]" row whose button reflects + flips a boolean. */
@@ -129,7 +138,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
     const s = this.getState();
     this.add(
       scene.add
-        .text(48, 224, "YOUR JOURNEY", {
+        .text(48, 232, "YOUR JOURNEY", {
           fontSize: "11px",
           color: MUTED,
           fontFamily: "monospace",
@@ -148,7 +157,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
       ["Stamps collected", `${earnedStampCount(s)} / ${STAMP_DEFS.length}`],
       ["Secrets found", `${foundSecretCount(s)} / ${SECRET_COUNT}`],
     ] as const;
-    let y = 248;
+    let y = 256;
     for (const [label, value] of lines) {
       this.add(
         scene.add.text(48, y, label, {
