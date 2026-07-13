@@ -1,17 +1,33 @@
 ﻿# Yes Man
 
-Incremental idle game â€” first title in the MeniscusMaximus ship order. Phaser 3 + TypeScript.
+A warm, funny **idle game about the quiet super-power of saying yes**. Tap a
+friendly YES button, build a chorus of enthusiastic helpers, and spread Cheer
+across the world — with no timers, no FOMO, and full offline progress.
 
-**Repo:** https://github.com/subtiliorars-sys/yes-man  
-**Status:** Week 1â€“2 slice â€” core sim, Phaser UI, save/load, domino shop, prestige.
+First title in the MeniscusMaximus ship order. Built with Phaser 3 + TypeScript.
 
-## Commands
+**Repo:** https://github.com/subtiliorars-sys/yes-man
+**Status:** v1.0 production candidate — full game loop, collectibles, secrets,
+settings, accessibility. `verify` green.
 
-```powershell
+## Play / develop
+
+```bash
 npm install
-npm run dev      # play in browser
-npm run verify   # tsc + vitest + build
+npm run dev      # play in your browser
+npm run verify   # tsc + vitest + production build (the CI gate)
 ```
+
+## What's in the game
+
+- **One-tap joy** — squash, particles, and a soft synth pop on every YES.
+- **7 Auto-Yesers** — from the Enthusiastic Dog to the Cosmic Yes.
+- **8 upgrades** + optional, never-punishing **prestige** ("A Fresh Outlook").
+- **35 "say yes to life" prompts** across three unlocking tiers.
+- **Golden Yes** — surprise bonus bubbles, delightful and never timed-FOMO.
+- **Collection book** — 17 stamps + 10 hidden secrets for completionists.
+- **Settings** — Sound, Reduce Motion, Journey stats, Export/Import, Start Over.
+- **Honest idle** — 30-day offline window, costs upfront, local-only saves.
 
 ## How to play
 
@@ -24,9 +40,19 @@ npm run verify   # tsc + vitest + build
 
 Progress saves automatically in your browser. No account required.
 
+## Project layout
+
+| Path | What |
+| --- | --- |
+| `src/sim/` | Pure, deterministic, unit-tested game logic (no Phaser) |
+| `src/scenes/` | Phaser presentation — GameScene + modal panels |
+| `src/audio/` | Synthesized Web Audio SFX (no asset files) |
+| `docs/` | GDD, Steam store copy, press kit, marketing, community, roadmap, mobile |
+
 ## Ethics
 
-No dark patterns: full offline progress, optional prestige, no FOMO timers. See `GOVERNANCE.md` and `MeniscusMaximus/YES_MAN_GDD.md`.
+No dark patterns: full offline progress, optional prestige, no FOMO timers, no
+loot boxes, no real-money progression. See `GOVERNANCE.md` and `docs/GDD.md`.
 
 ## First session
 
@@ -36,7 +62,7 @@ New players: see `docs/FIRST-SESSION.md` for what the first minutes include — 
 
 The build includes a local-first **Playtest + feedback** hub for opt-in tester notes, design votes, triage, invite sharing, and JSON export. See `PLAYTESTING.md` for the public playtest URL, community outreach copy, deployment notes, and the feedback review workflow.
 
-Distribution drafts (itch.io share kit) live in `docs/ITCHIO_SHARE_KIT.md` â€” internal only until owner ethics review.
+Distribution drafts (itch.io share kit) live in `docs/ITCHIO_SHARE_KIT.md` — internal only until owner ethics review.
 
 After GitHub Pages deploys, share the playtest landing page:
 
@@ -48,11 +74,18 @@ https://subtiliorars-sys.github.io/yes-man/playtest.html
 
 See `WAVES.md` for autonomous worker queue.
 
+## Docs
+
+- `docs/GDD.md` — game design & the pragmatist theme
+- `docs/STEAM_STORE.md` — store page copy _(owner approval before publishing)_
+- `docs/PRESS_KIT.md` · `docs/MARKETING.md` · `docs/COMMUNITY.md`
+- `docs/ROADMAP.md` — post-launch + the sequel *No Is a Complete Sentence*
+- `docs/MOBILE.md` — iOS/Android rollout path
+- `CHANGELOG.md` · `CONTRIBUTING.md` · `CODE_OF_CONDUCT.md`
+
 ## Next
 
-- Domino / wishing-well upgrade panel (prototype parity)
-- Prompt content expansion (60 prompts)
-- GitHub Actions verify CI
-- Pair reskin: *No Is a Complete Sentence*
-
-
+- Owner: visual QA pass at 480×800, then store page + Steam Direct (per
+  `GOVERNANCE.md`).
+- v1.1 free drop: tier-4 prompts + new secrets (scaffolded in `docs/ROADMAP.md`).
+- Mobile port via Capacitor (`docs/MOBILE.md`).

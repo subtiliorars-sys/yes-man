@@ -35,6 +35,19 @@ W7–W18: tier 3–6 prompts (60 total), keyboard YES, click milestones, SFX jui
 - [x] 44px min hit areas on header, playtest, prestige, prompt, domino buy buttons
 - [x] Export snapshot includes earned `stampIds` for triage
 
+### Wave YM-V1 — v1.0 production polish
+**Status:** `in_review`
+**Branch:** `claude/indie-clicker-game-j14xhs` · PR #3
+- [x] Golden Yes surprise bubbles (honest, no FOMO)
+- [x] Easter-egg / secrets system (10 collectibles) + tabbed Collection book
+- [x] Settings panel: Sound, Reduce Motion, Journey stats, Export/Import/Reset
+- [x] New stamps (25 total) incl. completion capstone
+- [x] Large-number formatting (K→Dc) + playtime tracking
+- [x] Mobile-tuned index.html; clean production build
+- [x] Full sales/community/sequel docs package (`docs/`)
+- [x] `npm run verify` green
+- [ ] Owner visual QA pass at 480×800
+
 ## Completed waves (earlier)
 
 ### Wave YM-W1 — Phaser vertical slice · `done` 2026-06-13
@@ -45,5 +58,8 @@ W7–W18: tier 3–6 prompts (60 total), keyboard YES, click milestones, SFX jui
 ### Wave YM-W6 — Click juice + sound stubs · `done` PR #2
 
 ## Blocked (owner)
-- Steam store page copy / marketing assets
-- No Is a Complete Sentence reskin until Yes Man v1 ships
+- Steam store page publish / Steam Direct / pricing (copy ready in
+  `docs/STEAM_STORE.md`)
+- Final capsule art, screenshots, trailer
+- *No Is a Complete Sentence* reskin until Yes Man v1 ships (sketch in
+  `docs/ROADMAP.md`)
