@@ -89,3 +89,9 @@ See `WAVES.md` for autonomous worker queue.
   `GOVERNANCE.md`).
 - v1.1 free drop: tier-4 prompts + new secrets (scaffolded in `docs/ROADMAP.md`).
 - Mobile port via Capacitor (`docs/MOBILE.md`).
+
+
+## Shared asset libraries
+
+**Agents:** do not invent colored-box placeholders when free art exists.
+See [docs/ASSETS.md](docs/ASSETS.md) â†’ `game-visual-assets`, `game-audio-assets`, `game-3d-assets`.
