@@ -1,12 +1,12 @@
-﻿# Redeploy static build to gh-pages (no workflow OAuth scope required).
+﻿# Redeploy static build to gh-pages (avoids needing `workflow` OAuth scope).
 # Usage: powershell -File scripts/deploy-gh-pages.ps1
+# Requires GitHub Pages source: branch gh-pages, folder / (Settings → Pages).
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)
 if (Test-Path package-lock.json) { npm ci } else { npm install }
+$env:CORPS_PAGES_BASE = "/yes-man/"
 npm run build
-if (Get-Command npm -ErrorAction SilentlyContinue) {
-  if ((Get-Content package.json -Raw) -match '"test"') { npm test }
-}
+if ((Get-Content package.json -Raw) -match '"test"') { npm run test }
 $stage = Join-Path $env:TEMP ("yes-man-gh-pages-" + [guid]::NewGuid().ToString("n"))
 New-Item -ItemType Directory -Path $stage | Out-Null
 Copy-Item -Recurse -Force .\dist\* $stage\
