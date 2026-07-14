@@ -39,7 +39,7 @@ import { snapshotFromState } from "../playtest/feedback.js";
 import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
 import { PlaytestPanel } from "./PlaytestPanel.js";
 import { applyMinTapTarget } from "../ui/tapTarget.js";
-import { isReduceMotion } from "../sim/prefs.js";
+import { isReduceMotion, hasSeenControlsTip, markControlsTipSeen } from "../sim/prefs.js";
 import {
   discoverSecret,
   evaluatePassiveSecrets,
@@ -101,6 +101,7 @@ export class GameScene extends Phaser.Scene {
   private konamiIndex = 0;
   private offlineSecondsPending = 0;
   private unbindVisibilitySave?: () => void;
+  private controlsTip?: Phaser.GameObjects.Text;
 
   constructor() {
     super("GameScene");
@@ -192,6 +193,8 @@ export class GameScene extends Phaser.Scene {
     const onYes = () => this.handleYes();
     circle.on("pointerdown", onYes);
     this.yesBtn.on("pointerdown", onYes);
+
+    this.maybeShowControlsTip();
 
     if (this.input.keyboard) {
       const onKeyYes = (event: KeyboardEvent) => {
@@ -429,6 +432,29 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  /** One-time hint: keyboard + settings; gone after first YES or timeout. */
+  private maybeShowControlsTip(): void {
+    if (hasSeenControlsTip()) return;
+    const y = 250 + this.yesHitRadius + 18;
+    this.controlsTip = this.add
+      .text(240, y, "Space / Enter also tap YES · Esc closes menus · ⚙ sound", {
+        fontSize: "10px",
+        color: MUTED,
+        fontFamily: "system-ui, sans-serif",
+        align: "center",
+        wordWrap: { width: 420 },
+      })
+      .setOrigin(0.5, 0);
+    this.time.delayedCall(14_000, () => this.dismissControlsTip());
+  }
+
+  private dismissControlsTip(): void {
+    if (!this.controlsTip) return;
+    markControlsTipSeen();
+    this.controlsTip.destroy();
+    this.controlsTip = undefined;
+  }
+
   /** Dismiss the topmost modal overlay — Escape key and future dismiss hooks. */
   private dismissTopOverlay(): void {
     if (this.settingsPanel) {
@@ -451,6 +477,7 @@ export class GameScene extends Phaser.Scene {
 
   // ---- core loop ----------------------------------------------------------
   private handleYes(): void {
+    this.dismissControlsTip();
     const result = clickYes(this.state);
     this.yesBtn.setText(
       YES_VARIANTS[Math.floor(Math.random() * YES_VARIANTS.length)] ?? "YES"

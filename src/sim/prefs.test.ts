@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { isReduceMotion, setReduceMotion } from "./prefs.js";
+import {
+  hasSeenControlsTip,
+  isReduceMotion,
+  markControlsTipSeen,
+  setReduceMotion,
+} from "./prefs.js";
 
 describe("ui prefs", () => {
   beforeEach(() => {
@@ -22,5 +27,14 @@ describe("ui prefs", () => {
     expect(isReduceMotion()).toBe(true);
     setReduceMotion(false);
     expect(isReduceMotion()).toBe(false);
+  });
+
+  it("defaults controls tip to unseen", () => {
+    expect(hasSeenControlsTip()).toBe(false);
+  });
+
+  it("persists controls tip seen", () => {
+    markControlsTipSeen();
+    expect(hasSeenControlsTip()).toBe(true);
   });
 });
