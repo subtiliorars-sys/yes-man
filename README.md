@@ -1,5 +1,7 @@
 ﻿# Yes Man
 
+**Live:** [Play Yes Man](https://subtiliorars-sys.github.io/yes-man/) — tap YES, build helpers, spread Cheer. No timers, no FOMO.
+
 A warm, funny **idle game about the quiet super-power of saying yes**. Tap a
 friendly YES button, build a chorus of enthusiastic helpers, and spread Cheer
 across the world — with no timers, no FOMO, and full offline progress.
