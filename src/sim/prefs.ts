@@ -1,7 +1,7 @@
 /** Lightweight UI preferences (separate from game save so they're device-local). */
 
 const REDUCE_MOTION_KEY = "yes-man-reduce-motion";
-const CONTROLS_TIP_KEY = "yes-man-controls-tip-seen";
+const CONTROLS_TIP_KEY = "yes-man-controls-tip-seen-v2";
 
 function readFlag(key: string): boolean {
   try {

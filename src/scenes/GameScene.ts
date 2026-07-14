@@ -437,7 +437,7 @@ export class GameScene extends Phaser.Scene {
     if (hasSeenControlsTip()) return;
     const y = 250 + this.yesHitRadius + 18;
     this.controlsTip = this.add
-      .text(240, y, "Space / Enter also tap YES · Esc closes menus · ⚙ sound", {
+      .text(240, y, "Space / Enter also YES · Esc closes menus · ⚙ sound · tab-away saves", {
         fontSize: "10px",
         color: MUTED,
         fontFamily: "system-ui, sans-serif",
