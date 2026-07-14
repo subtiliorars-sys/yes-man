@@ -1,4 +1,4 @@
-﻿# Yes Man
+# Yes Man
 
 **Live:** [Play Yes Man](https://subtiliorars-sys.github.io/yes-man/) — tap YES, build helpers, spread Cheer. No timers, no FOMO.
 
@@ -11,6 +11,11 @@ First title in the MeniscusMaximus ship order. Built with Phaser 3 + TypeScript.
 **Repo:** https://github.com/subtiliorars-sys/yes-man
 **Status:** v1.0 production candidate — full game loop, collectibles, secrets,
 settings, accessibility. `verify` green.
+
+
+### First-run tip
+
+Open [Play](https://subtiliorars-sys.github.io/yes-man/) (or `npm run dev`). Say YES to keep the chain alive — check Settings for controls; the first run shows a one-time tip.
 
 ## Play / develop
 
