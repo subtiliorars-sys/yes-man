@@ -20,6 +20,7 @@ import {
   UPGRADE_DEFS,
   YES_VARIANTS,
 } from "../sim/economy.js";
+import { bindVisibilitySave } from "../sim/lifecycle.js";
 import { tryLoad, trySave } from "../sim/persistence.js";
 import type { PromptDef, SimState } from "../sim/types.js";
 import { DominoPanel } from "./DominoPanel.js";
@@ -99,6 +100,7 @@ export class GameScene extends Phaser.Scene {
   private titleTaps = 0;
   private konamiIndex = 0;
   private offlineSecondsPending = 0;
+  private unbindVisibilitySave?: () => void;
 
   constructor() {
     super("GameScene");
@@ -261,7 +263,11 @@ export class GameScene extends Phaser.Scene {
     });
     this.scheduleGolden(true);
 
+    this.unbindVisibilitySave = bindVisibilitySave(() => trySave(this.state, storage()));
+
     this.events.on("shutdown", () => {
+      this.unbindVisibilitySave?.();
+      this.unbindVisibilitySave = undefined;
       trySave(this.state, storage());
       this.saveTimer?.destroy();
       this.goldenTimer?.destroy();
