@@ -207,6 +207,7 @@ export class GameScene extends Phaser.Scene {
       };
       this.input.keyboard.on("keydown-SPACE", onKeyYes);
       this.input.keyboard.on("keydown-ENTER", onKeyYes);
+      this.input.keyboard.on("keydown-ESC", () => this.dismissTopOverlay());
     }
 
     if (narrow) {
@@ -420,6 +421,26 @@ export class GameScene extends Phaser.Scene {
         if (def) this.celebrateSecrets([def]);
       },
     });
+  }
+
+  /** Dismiss the topmost modal overlay — Escape key and future dismiss hooks. */
+  private dismissTopOverlay(): void {
+    if (this.settingsPanel) {
+      this.settingsPanel.dismiss();
+      return;
+    }
+    if (this.playtestPanel) {
+      this.playtestPanel.dismiss();
+      return;
+    }
+    if (this.stampBook) {
+      this.stampBook.dismiss();
+      return;
+    }
+    if (this.prestigeConfirm) {
+      this.prestigeConfirm.destroy(true);
+      this.prestigeConfirm = undefined;
+    }
   }
 
   // ---- core loop ----------------------------------------------------------
