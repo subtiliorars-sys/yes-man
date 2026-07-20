@@ -94,7 +94,8 @@ See `WAVES.md` for autonomous worker queue.
 
 - Owner: visual QA pass at 480×800, then store page + Steam Direct (per
   `GOVERNANCE.md`).
-- v1.1 free drop: tier-4 prompts + new secrets (scaffolded in `docs/ROADMAP.md`).
+- v1.1 content (tier 4–6 prompts, 60 total) already shipped; remaining item is
+  Steam Achievements once Steam Direct is live (`docs/ROADMAP.md`).
 - Mobile port via Capacitor (`docs/MOBILE.md`).
 
 
