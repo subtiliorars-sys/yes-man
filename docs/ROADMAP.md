@@ -18,11 +18,17 @@ Shipped and verified:
 
 ## v1.1 — "More Yes" (free, ~Day 30)
 
-- **Tier-4 prompts** (10) unlocking at 250K total Cheer. _(Slot ready:
-  add `PROMPTS_TIER4` + threshold in `economy.ts`, extend `promptPool`.)_
-- **3–4 new secrets** (the registry is data-driven in `src/sim/secrets.ts`).
-- **New stamps** for the new content.
-- **Steam Achievements** mapped 1:1 to stamps (native shell hook).
+Shipped ahead of schedule, in the W7–W18 sprint (see `WAVES.md`):
+
+- **Tier 4–6 prompts** (30 more, 60 total across six tiers) unlocking at
+  100K / 500K / 2M total Cheer. Wired into `promptPool` in `engine.ts`.
+- **Matching stamps** — `tier4_unlock`, `tier5_unlock`, `tier6_unlock`.
+- 10 secrets (the full v1.0 target) already shipped; no new ones queued.
+
+Remaining from the original v1.1 scope:
+
+- **Steam Achievements** mapped 1:1 to stamps (native shell hook) — still
+  pending, blocked on Steam Direct per `WAVES.md`.
 
 ## v1.2 — "Cloud & Cosmetics"
 
