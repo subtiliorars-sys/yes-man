@@ -4,6 +4,8 @@ Goal: invite as many useful playtesters as possible while keeping feedback ethic
 
 For itch.io listing drafts (title, tags, screenshot captions, store disclaimer), see `docs/ITCHIO_SHARE_KIT.md`. Owner must approve before any of that copy goes on a public store page.
 
+For venue-specific, ready-to-paste outreach copy (per-platform tone, Reddit karma-gate status, itch.io blocker notes), see `OUTREACH.md`.
+
 **Known blocker:** no itch.io page URL exists anywhere in this repo or its
 docs yet — `docs/ITCHIO_SHARE_KIT.md` is draft copy pending the owner's
 ethics review, not a published listing. Any outreach post that references
