@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   FONT_SCALE_STEPS,
+  getButtonSkin,
   getFontScale,
   getFontScaleIndex,
   hasSeenControlsTip,
   isColorblindMode,
   isReduceMotion,
   markControlsTipSeen,
+  setButtonSkin,
   setColorblindMode,
   setFontScaleIndex,
   setReduceMotion,
@@ -75,6 +77,17 @@ describe("ui prefs", () => {
     expect(getFontScaleIndex()).toBe(0);
     setFontScaleIndex(99);
     expect(getFontScaleIndex()).toBe(FONT_SCALE_STEPS.length - 1);
+  });
+
+  it("defaults button skin to 'default'", () => {
+    expect(getButtonSkin()).toBe("default");
+  });
+
+  it("persists the selected button skin", () => {
+    setButtonSkin("mint");
+    expect(getButtonSkin()).toBe("mint");
+    setButtonSkin("default");
+    expect(getButtonSkin()).toBe("default");
   });
 
   it("round-trips through export/import-style persistence (localStorage)", () => {

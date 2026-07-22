@@ -39,7 +39,8 @@ import { snapshotFromState } from "../playtest/feedback.js";
 import { shouldOpenPlaytestHub } from "../playtest/recruitment.js";
 import { PlaytestPanel } from "./PlaytestPanel.js";
 import { applyMinTapTarget } from "../ui/tapTarget.js";
-import { isReduceMotion, hasSeenControlsTip, markControlsTipSeen } from "../sim/prefs.js";
+import { isReduceMotion, hasSeenControlsTip, markControlsTipSeen, getButtonSkin } from "../sim/prefs.js";
+import { isSkinUnlocked, skinById } from "../sim/skins.js";
 import {
   discoverSecret,
   evaluatePassiveSecrets,
@@ -319,8 +320,18 @@ export class GameScene extends Phaser.Scene {
     this.bgRect.setFillStyle(color);
   }
 
-  /** GDD: button background shifts slowly through warm colors. */
+  /** GDD: button background shifts slowly through warm colors — only for the
+   * default skin. A cosmetic skin (once unlocked) shows its own static colors
+   * instead of the ambient hue cycle. */
   private refreshButtonHue(delta: number): void {
+    const skinId = getButtonSkin();
+    const skin = skinId !== "default" && isSkinUnlocked(this.state, skinId) ? skinById(skinId) : undefined;
+    if (skin) {
+      this.yesCircle.setFillStyle(skin.fill);
+      this.yesCircle.setStrokeStyle(4, skin.stroke);
+      return;
+    }
+    this.yesCircle.setStrokeStyle(4, 0xff8c00);
     if (isReduceMotion()) return;
     this.huePhase += delta / 300_000;
     const t = (Math.sin(this.huePhase * Math.PI * 2) + 1) / 2;
