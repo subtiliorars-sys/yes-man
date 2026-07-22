@@ -4,6 +4,7 @@ const REDUCE_MOTION_KEY = "yes-man-reduce-motion";
 const CONTROLS_TIP_KEY = "yes-man-controls-tip-seen-v2";
 const COLORBLIND_MODE_KEY = "yes-man-colorblind-mode";
 const FONT_SCALE_KEY = "yes-man-font-scale";
+const BUTTON_SKIN_KEY = "yes-man-button-skin";
 
 function readFlag(key: string): boolean {
   try {
@@ -67,6 +68,24 @@ export function setFontScaleIndex(index: number): void {
 /** Multiplier for the current font-scale step (1 by default — no visual change). */
 export function getFontScale(): number {
   return FONT_SCALE_STEPS[getFontScaleIndex()] ?? 1;
+}
+
+/** Selected YES-button cosmetic skin id (see sim/skins.ts). Defaults to "default";
+ * whether it's actually unlocked for the current save is checked separately. */
+export function getButtonSkin(): string {
+  try {
+    return localStorage.getItem(BUTTON_SKIN_KEY) ?? "default";
+  } catch {
+    return "default";
+  }
+}
+
+export function setButtonSkin(id: string): void {
+  try {
+    localStorage.setItem(BUTTON_SKIN_KEY, id);
+  } catch {
+    /* private mode / quota — non-fatal */
+  }
 }
 
 /** One-time HUD hint for keyboard + settings — shown until first YES or auto-dismiss. */

@@ -11,7 +11,10 @@ import {
   setFontScaleIndex,
   FONT_SCALE_LABELS,
   FONT_SCALE_STEPS,
+  getButtonSkin,
+  setButtonSkin,
 } from "../sim/prefs.js";
+import { unlockedSkins } from "../sim/skins.js";
 import { STAMP_DEFS, earnedStampCount } from "../sim/stamps.js";
 import { SECRET_COUNT, foundSecretCount } from "../sim/secrets.js";
 import type { SimState } from "../sim/types.js";
@@ -58,7 +61,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
     this.add(backdrop);
 
     const panel = scene.add
-      .rectangle(240, 400, 440, 710, 0xfff8dc)
+      .rectangle(240, 400, 440, 760, 0xfff8dc)
       .setStrokeStyle(2, 0xe8d5b0);
     this.add(panel);
 
@@ -121,13 +124,14 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
     this.add(colorblind);
 
     this.buildFontScaleRow(scene, 254);
+    this.buildSkinRow(scene, 278);
 
     this.add(
       scene.add
         .text(
           48,
-          276,
-          "Colorblind mode swaps warning colors for a blue-safe tone with an icon cue.\nFont size affects Settings and HUD text.",
+          302,
+          "Colorblind mode swaps warning colors for a blue-safe tone with an icon cue.\nFont size affects Settings and HUD text. YES button skin is purely cosmetic.",
           {
             fontSize: scaledFontSize(9),
             color: MUTED,
@@ -136,6 +140,47 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
         )
         .setOrigin(0, 0.5)
     );
+  }
+
+  /** "YES skin …… [Label ▸]" row — cycles through skins unlocked so far. */
+  private buildSkinRow(scene: Phaser.Scene, y: number): void {
+    const row = scene.add.container(0, 0);
+    row.add(
+      scene.add
+        .text(48, y, "YES button skin", { fontSize: scaledFontSize(13), color: INK, fontFamily: "system-ui, sans-serif" })
+        .setOrigin(0, 0.5)
+    );
+    const btn = scene.add
+      .text(432, y, "", {
+        fontSize: scaledFontSize(12),
+        color: "#ffffff",
+        fontFamily: "system-ui, sans-serif",
+        fontStyle: "bold",
+        backgroundColor: AMBER,
+        padding: { x: 10, y: 4 },
+      })
+      .setOrigin(1, 0.5)
+      .setInteractive({ useHandCursor: true });
+    applyMinTapTarget(btn);
+    const paint = (): void => {
+      const available = unlockedSkins(this.getState());
+      const current = getButtonSkin();
+      const active = available.find((s) => s.id === current) ?? available[0];
+      btn.setText(`${active?.label ?? "Classic Amber"} ▸`);
+    };
+    paint();
+    btn.on("pointerdown", () => {
+      const available = unlockedSkins(this.getState());
+      if (available.length === 0) return;
+      const current = getButtonSkin();
+      const idx = available.findIndex((s) => s.id === current);
+      const next = available[(idx + 1) % available.length];
+      if (next) setButtonSkin(next.id);
+      paint();
+      this.cb.onChange();
+    });
+    row.add(btn);
+    this.add(row);
   }
 
   /** "Font size …… [Normal ▸]" row — cycles through discrete steps on tap. */
@@ -216,7 +261,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
     const s = this.getState();
     this.add(
       scene.add
-        .text(48, 302, "YOUR JOURNEY", {
+        .text(48, 328, "YOUR JOURNEY", {
           fontSize: scaledFontSize(11),
           color: MUTED,
           fontFamily: "monospace",
@@ -235,7 +280,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
       ["Stamps collected", `${earnedStampCount(s)} / ${STAMP_DEFS.length}`],
       ["Secrets found", `${foundSecretCount(s)} / ${SECRET_COUNT}`],
     ] as const;
-    let y = 326;
+    let y = 352;
     for (const [label, value] of lines) {
       this.add(
         scene.add.text(48, y, label, {
@@ -259,7 +304,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
   private buildData(scene: Phaser.Scene): void {
     this.add(
       scene.add
-        .text(48, 530, "YOUR DATA", {
+        .text(48, 556, "YOUR DATA", {
           fontSize: scaledFontSize(11),
           color: MUTED,
           fontFamily: "monospace",
@@ -267,15 +312,15 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
         })
         .setOrigin(0, 0.5)
     );
-    const exportBtn = this.makeButton(scene, 110, 558, "Export", AMBER, () => this.doExport());
-    const importBtn = this.makeButton(scene, 240, 558, "Import", "#5f9ea0", () => this.doImport());
+    const exportBtn = this.makeButton(scene, 110, 584, "Export", AMBER, () => this.doExport());
+    const importBtn = this.makeButton(scene, 240, 584, "Import", "#5f9ea0", () => this.doImport());
     const resetLabel = isColorblindMode() ? "⚠ Start Over" : "Start Over";
     const resetColor = isColorblindMode() ? DANGER_COLORBLIND : DANGER;
-    const resetBtn = this.makeButton(scene, 372, 558, resetLabel, resetColor, () => this.doReset());
+    const resetBtn = this.makeButton(scene, 372, 584, resetLabel, resetColor, () => this.doReset());
     this.add([exportBtn, importBtn, resetBtn]);
     this.add(
       scene.add
-        .text(240, 586, "Export copies a backup code. Nothing is ever sent online.", {
+        .text(240, 612, "Export copies a backup code. Nothing is ever sent online.", {
           fontSize: scaledFontSize(9),
           color: MUTED,
           fontFamily: "system-ui, sans-serif",
@@ -288,7 +333,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
   private buildAbout(scene: Phaser.Scene): void {
     this.add(
       scene.add
-        .text(48, 622, "ABOUT", {
+        .text(48, 648, "ABOUT", {
           fontSize: scaledFontSize(11),
           color: MUTED,
           fontFamily: "monospace",
@@ -298,7 +343,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
     );
     this.add(
       scene.add
-        .text(240, 652, "Yes Man v1.0 — a feel-good idle game.\nNo timers. No FOMO. Full offline progress.", {
+        .text(240, 678, "Yes Man v1.0 — a feel-good idle game.\nNo timers. No FOMO. Full offline progress.", {
           fontSize: scaledFontSize(11),
           color: INK,
           fontFamily: "system-ui, sans-serif",
@@ -307,7 +352,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
         .setOrigin(0.5)
     );
     const why = scene.add
-      .text(240, 694, "Why “yes”? →", {
+      .text(240, 720, "Why “yes”? →", {
         fontSize: scaledFontSize(11),
         color: AMBER,
         fontFamily: "system-ui, sans-serif",
@@ -323,7 +368,7 @@ export class SettingsPanel extends Phaser.GameObjects.Container {
     this.add(why);
     this.add(
       scene.add
-        .text(240, 748, "Made with love. Yes to you. 💛", {
+        .text(240, 774, "Made with love. Yes to you. 💛", {
           fontSize: scaledFontSize(10),
           color: MUTED,
           fontFamily: "system-ui, sans-serif",
